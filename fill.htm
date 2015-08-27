@@ -41,8 +41,8 @@ function boxwrapper() {
   //x = ballx - 1;// + Math.random() * 1;
   //y = bally - 1; // + Math.random() * 1;
   
-  x = width/2 +  height/3  * Math.cos(angle);
-  y = height/2 +  height/3  * Math.sin(angle);
+  x = width/2 + ( height/3 - angle * 10)  * Math.cos(angle);
+  y = height/2 + ( height/3 - angle * 10) * Math.sin(angle);
   box(x, y, size, 255 * Math.random(), 255 * Math.random(), 0, aplha )
 
 
