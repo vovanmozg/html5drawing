@@ -15,54 +15,109 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
-
-var bars = new Array();
-
+var counter = 0;
 
 
-function Bar() {
+
+function Graph() {
+  this.angle = 0;
+  this.prevBarHeight = 300;
+  this.direction = 1;
+  this.bars = new Array();
+
+  
+
+  this.createBar = function(_this) {
+    
+    _this.recalcAngle();
+
+    var height = _this.calcNextBar();
+    _this.prevBarHeight = height;
+    _this.bars.push(new Bar(height));  
+  }
+
+
+
+
+  this.calcNextBar = function () {
+    return this.prevBarHeight + this.angle;
+    
+  }
+
+  this.recalcAngle = function () {
+    this.angle = this.angle + 1 * this.direction;
+
+    if(Math.random() > 0.9)
+      this.direction *= -1;
+
+    if(this.prevBarHeight < 100) {
+      this.direction = 1;
+      this.angle = this.angle * 0.8;
+    }
+
+    if(this.prevBarHeight > height - 100) {
+      this.direction = -1;
+      this.angle = this.angle * 0.8;
+    }
+      
+  }
+
+  setInterval(this.createBar, 100, this);
+
+
+
+}
+
+
+function Bar(h) {
   this.h = Math.random() * 300;
+  this.h = Math.sin(counter/100) * 300;
+  this.h = h;
   this.x = width;
-  this.color = 'rgb(' + parseInt(200) + ', '  + parseInt(50) + ', ' + parseInt(0) + ')';
+  this.color = 'rgb(' + parseInt(50) + ', '  + parseInt(50) + ', ' + parseInt(100) + ')';
 
   this.move = function() {
-    this.x--;
-
-    if(this.x <= 0)
-      delete this
+    this.x-=2;
   }
 
   this.draw = function() {
     ctx.globalAlpha = 1;
-    ctx.fillStyle = this.color; 
-    ctx.fillRect(this.x, height, 5, -this.h);
+
     ctx.fillStyle = '#000000'; 
-    ctx.fillRect(this.x, height - this.h, 5, -300);
+    ctx.fillRect(this.x, height, 1, -height);
+
+    ctx.fillStyle = this.color; 
+    ctx.fillRect(this.x, height, 1, -this.h);
+
   }
 }
 
 
-function render() {
+function render() {  
+  for(var i = 0; i < G.bars.length; i++) {
+    G.bars[i].move();
 
-  for(var i = 0; i < bars.length; i++) {
-    bars[i].move();
-    bars[i].draw();
+    if(G.bars[i].x <= 0) {
+      var l = G.bars.length;
+      var obj = G.bars[i];
+      G.bars.splice(i, 1);
+      delete obj; 
+    }
+    else
+      G.bars[i].draw();
   }
 
-  console.log(bars.length);
+  //console.log(G.bars.length);
 
   requestAnimationFrame(render);
 }
 
-function createBar() {
-  bars.push( new Bar );
-} 
 
-setInterval(createBar, 100);
 
+
+
+G = new Graph();
 render();
-
-
 
 
 </script>
