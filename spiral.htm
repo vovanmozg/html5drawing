@@ -41,14 +41,14 @@ function boxwrapper() {
   //x = ballx - 1;// + Math.random() * 1;
   //y = bally - 1; // + Math.random() * 1;
   
-  x = width/2 + ( width/3 * Math.sin(angle/60) )  * Math.cos(angle);
-  y = height/2 + ( width/3 * Math.sin(angle/60) ) * Math.sin(angle);
+  x = width/2 + ( angle * 4)  * Math.cos(angle);
+  y = height/2 + ( angle * 4) * Math.sin(angle);
   box(x, y, size/2, 255 * Math.random(), 255 * Math.random(), 0, aplha )
 
 
   x = x + rand * 50 * Math.cos(angle);
   y = y + rand * 50 * Math.sin(angle);
-  box(x, y, size/2, 0, 255 * rand, 0, aplha )
+  box(x, y, size/2, 255 * Math.random(), 0, 255 * Math.random(), aplha )
 
   x = width/2 +  width/3  * Math.cos(angle) + 50 * Math.cos(angle*3) - 40 * Math.sin(angle*3);
   y = height/2 +  height/3  * Math.sin(angle) + 100 * Math.sin(angle*3) + 40 * Math.sin(angle*3);

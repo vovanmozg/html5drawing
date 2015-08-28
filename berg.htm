@@ -1,0 +1,70 @@
+<html>
+<body>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #bbb;
+}
+</style>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight;
+
+var bars = new Array();
+
+
+
+function Bar() {
+  this.h = Math.random() * 300;
+  this.x = width;
+  this.color = 'rgb(' + parseInt(200) + ', '  + parseInt(50) + ', ' + parseInt(0) + ')';
+
+  this.move = function() {
+    this.x--;
+
+    if(this.x <= 0)
+      delete this
+  }
+
+  this.draw = function() {
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = this.color; 
+    ctx.fillRect(this.x, height, 5, -this.h);
+    ctx.fillStyle = '#000000'; 
+    ctx.fillRect(this.x, height - this.h, 5, -300);
+  }
+}
+
+
+function render() {
+
+  for(var i = 0; i < bars.length; i++) {
+    bars[i].move();
+    bars[i].draw();
+  }
+
+  console.log(bars.length);
+
+  requestAnimationFrame(render);
+}
+
+function createBar() {
+  bars.push( new Bar );
+} 
+
+setInterval(createBar, 100);
+
+render();
+
+
+
+
+</script>
+</body>
+</html>
