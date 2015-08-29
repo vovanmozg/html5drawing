@@ -19,12 +19,13 @@ var counter = 0;
 
 
 
+
 function Graph() {
   this.angle = 0;
   this.prevBarHeight = 300;
   this.direction = 1;
   this.bars = new Array();
-
+  this.yaolk = new Yaolk();
   
 
   this.createBar = function(_this) {
@@ -62,19 +63,30 @@ function Graph() {
       
   }
 
-  setInterval(this.createBar, 100, this);
 
+  setInterval(this.createBar, 200, this);
 
 
 }
 
+
+function Yaolk() {
+  this.draw = function() {
+    if(G.bars[G.bars.length-1]) {
+        ctx.fillStyle = '#aa0000';
+        ctx.fillRect(width-10, height - 20 - G.bars[G.bars.length-1].h, 10, 10);  
+    }
+
+  }
+}
 
 function Bar(h) {
   this.h = Math.random() * 300;
   this.h = Math.sin(counter/100) * 300;
   this.h = h;
   this.x = width;
-  this.color = 'rgb(' + parseInt(50) + ', '  + parseInt(50) + ', ' + parseInt(100) + ')';
+  this.color = 'rgb(' + parseInt(150) + ', '  + parseInt(150) + ', ' + parseInt(100) + ')';
+  this.hasTree = Math.random() > 0.9;
 
   this.move = function() {
     this.x-=2;
@@ -88,6 +100,16 @@ function Bar(h) {
 
     ctx.fillStyle = this.color; 
     ctx.fillRect(this.x, height, 1, -this.h);
+
+    if(this.hasTree) {
+
+      ctx.fillStyle = '#440000'; 
+      ctx.fillRect(this.x, height - this.h - 10, 1, 10);
+
+      ctx.fillStyle = '#006600'; 
+      ctx.fillRect(this.x, height - this.h - 20, 1, 10);
+    }
+
 
   }
 }
@@ -103,11 +125,15 @@ function render() {
       G.bars.splice(i, 1);
       delete obj; 
     }
-    else
+    else {
       G.bars[i].draw();
+    }
+
+    //G.yaolk.draw();
+
   }
 
-  //console.log(G.bars.length);
+  console.log(G.bars.length);
 
   requestAnimationFrame(render);
 }
