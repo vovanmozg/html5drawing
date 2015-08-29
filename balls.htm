@@ -21,10 +21,8 @@ var counter = 0;
 
 
 function Graph() {
-  this.angle = 0;
-  this.prevBarHeight = 300;
-  this.direction = 1;
-  this.bars = new Array();
+  this.particles = new Array();
+
   
 
   this.createBar = function(_this) {
@@ -69,63 +67,38 @@ function Graph() {
 }
 
 
-function Bar(h) {
-  this.h = Math.random() * 300;
-  this.h = Math.sin(counter/100) * 300;
-  this.h = h;
-  this.x = width;
+
+function Ball() {
+  this.size = 10;
+  this.x = 500;
+  this.y = 500;
   this.color = 'rgb(' + parseInt(150) + ', '  + parseInt(150) + ', ' + parseInt(100) + ')';
-  this.hasTree = Math.random() > 0.9;
 
   this.move = function() {
-    this.x-=2;
+    
   }
 
   this.draw = function() {
     ctx.globalAlpha = 1;
 
-    ctx.fillStyle = '#000000'; 
-    ctx.fillRect(this.x, height, 1, -height);
+    // ctx.fillStyle = '#000000'; 
+    // ctx.fillRect(this.x, height, 1, -height);
 
     ctx.fillStyle = this.color; 
     ctx.fillRect(this.x, height, 1, -this.h);
-
-    if(this.hasTree) {
-
-      ctx.fillStyle = '#440000'; 
-      ctx.fillRect(this.x, height - this.h - 10, 1, 10);
-
-      ctx.fillStyle = '#006600'; 
-      ctx.fillRect(this.x, height - this.h - 20, 1, 10);
-    }
-
-
   }
 }
 
 
 function render() {  
-  for(var i = 0; i < G.bars.length; i++) {
-    G.bars[i].move();
-
-    if(G.bars[i].x <= 0) {
-      var l = G.bars.length;
-      var obj = G.bars[i];
-      G.bars.splice(i, 1);
-      delete obj; 
-    }
-    else {
-      G.bars[i].draw();
-    }
-
-
+  for(var i = 0; i < G.particles.length; i++) {
+    G.particles[i].move();
+    G.particles[i].draw();
   }
 
-  console.log(G.bars.length);
-
+  //console.log(G.bars.length);
   requestAnimationFrame(render);
 }
-
 
 
 
