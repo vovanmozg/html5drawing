@@ -44,20 +44,21 @@ function Graph() {
     for(var i = 0; i < this.particles.length - 1; i++) {
       for(var j = 1; j < this.particles.length; j++) {
         if (i != j) {
-          var xd = this.particles[i].x - this.particles[j].x;
-          var yd = this.particles[i].y - this.particles[j].y;
-          if(xd > -5 && xd < 5 && yd > -5 && yd < 5) {
-            var to_remove = this.particles[i].hit(this.particles[j]);
-            for(var k = 0; k < to_remove.length; k++) {
-              if(this.particles[i] == to_remove[k])
-                this.particles.splice(i, 1)
-              
-              if(this.particles[j] == to_remove[k])
-                this.particles.splice(j, 1)
-              
-              delete to_remove[k];
+          if (this.particles[i] && this.particles[j]) {
+            var xd = this.particles[i].x - this.particles[j].x;
+            var yd = this.particles[i].y - this.particles[j].y;
+            if(xd > -5 && xd < 5 && yd > -5 && yd < 5) {
+              var to_remove = this.particles[i].hit(this.particles[j]);
+              for(var k = 0; k < to_remove.length; k++) {
+                if(this.particles[i] == to_remove[k])
+                  this.particles.splice(i, 1)
+                
+                if(this.particles[j] == to_remove[k])
+                  this.particles.splice(j, 1)
+                
+                delete to_remove[k];
+              }
             }
-            
           }
         }
       }
@@ -115,6 +116,12 @@ function Particle(type, x, y) {
 
   }
 
+  this.follow_to = function(particle) {
+    this.direction = particle.direction;
+    this.speed = this.speed;
+  }
+
+
   this.draw = function() {
     ctx.globalAlpha = 1;
     
@@ -150,20 +157,22 @@ function Particle(type, x, y) {
       return new Array(this, particle);
     }
     else if(this.type == 'cat' && particle.type == 'worm') {
-      G.createWorm(); G.createWorm();
+
       G.createWorm();
       return [this];
     }
     else if(this.type == 'worm' && particle.type == 'cat') {
-      G.createWorm(); G.createWorm();
+
       G.createWorm(); 
       return [particle];
     }
     else if(this.type == 'cat' && particle.type == 'bird') {
-      return new Array(particle);fc2847
+      this.follow_to(particle);
+      return []; //new Array(particle);
     }
     else if(this.type == 'bird' && particle.type == 'cat') {
-      return new Array(this);
+      particle.follow_to(this);
+      return [] ;//new Array(this);
     }
     else if(this.type == 'cat' && particle.type == 'cat') {
       G.createWorm(this.x, this.y);
