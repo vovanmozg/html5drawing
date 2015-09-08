@@ -1,0 +1,112 @@
+<html>
+<body>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #bbb;
+}
+</style>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight;
+var counter = 0;
+
+
+
+
+function Graph() {
+  this.particles = new Array();
+
+  
+
+  this.createBar = function(_this) {
+    
+    _this.recalcAngle();
+
+    var height = _this.calcNextBar();
+    _this.prevBarHeight = height;
+    _this.bars.push(new Bar(height));  
+  }
+
+
+
+
+  this.calcNextBar = function () {
+    return this.prevBarHeight + this.angle;
+    
+  }
+
+  this.recalcAngle = function () {
+    this.angle = this.angle + 1 * this.direction;
+
+    if(Math.random() > 0.9)
+      this.direction *= -1;
+
+    if(this.prevBarHeight < 100) {
+      this.direction = 1;
+      this.angle = this.angle * 0.8;
+    }
+
+    if(this.prevBarHeight > height - 100) {
+      this.direction = -1;
+      this.angle = this.angle * 0.8;
+    }
+      
+  }
+
+
+  setInterval(this.createBar, 200, this);
+
+
+}
+
+
+
+function Ball() {
+  this.size = 10;
+  this.x = 500;
+  this.y = 500;
+  this.color = 'rgb(' + parseInt(150) + ', '  + parseInt(150) + ', ' + parseInt(100) + ')';
+
+  this.move = function() {
+    
+  }
+
+  this.draw = function() {
+    ctx.globalAlpha = 1;
+
+    // ctx.fillStyle = '#000000'; 
+    // ctx.fillRect(this.x, height, 1, -height);
+
+    ctx.fillStyle = this.color; 
+    ctx.fillRect(this.x, height, 1, -this.h);
+  }
+}
+
+
+function render() {  
+  for(var i = 0; i < G.particles.length; i++) {
+    G.particles[i].move();
+    G.particles[i].draw();
+  }
+
+  //console.log(G.bars.length);
+  requestAnimationFrame(render);
+}
+
+
+
+
+G = new Graph();
+render();
+
+
+</script>
+</body>
+</html>

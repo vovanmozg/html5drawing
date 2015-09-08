@@ -11,95 +11,94 @@ body {
 <canvas id="canvas"></canvas>
 </body>
 <script>
+
+
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 var width = canvas.width = window.innerWidth;
 var height = canvas.height = window.innerHeight;
 var counter = 0;
+var x = 0;
+var y = 0;
 
 
 
 
 function Graph() {
-  this.particles = new Array();
+  this.balls = new Array();
 
-  
-
-  this.createBar = function(_this) {
-    
-    _this.recalcAngle();
-
-    var height = _this.calcNextBar();
-    _this.prevBarHeight = height;
-    _this.bars.push(new Bar(height));  
-  }
-
-
-
-
-  this.calcNextBar = function () {
-    return this.prevBarHeight + this.angle;
-    
-  }
-
-  this.recalcAngle = function () {
-    this.angle = this.angle + 1 * this.direction;
-
-    if(Math.random() > 0.9)
-      this.direction *= -1;
-
-    if(this.prevBarHeight < 100) {
-      this.direction = 1;
-      this.angle = this.angle * 0.8;
+  this.createBall = function(x, y, size) {
+    var ball = new Ball(x, y, size);
+    for(var i = 0; i < this.balls.length; i++) {
+      var xd = this.balls[i].x - ball.x;
+      var yd = this.balls[i].y - ball.y;
+      var s1 = this.balls[i].size;
+      var s2 = ball.size;
+      if((s1+s2)*(s1+s2) > xd*xd + yd*yd) {
+        delete ball;
+        return
+      }
     }
-
-    if(this.prevBarHeight > height - 100) {
-      this.direction = -1;
-      this.angle = this.angle * 0.8;
+    if(ball) {
+      this.balls.push(ball);  
+      return ball;
     }
-      
   }
-
-
-  setInterval(this.createBar, 200, this);
-
-
 }
 
 
+function Ball(x, y, size) {
+  this.size = size || 10;
+  this.x = x || width * Math.random();
+  this.y = y || height * Math.random();
+  this.color = '#552200'
 
-function Ball() {
-  this.size = 10;
-  this.x = 500;
-  this.y = 500;
-  this.color = 'rgb(' + parseInt(150) + ', '  + parseInt(150) + ', ' + parseInt(100) + ')';
-
-  this.move = function() {
-    
-  }
 
   this.draw = function() {
     ctx.globalAlpha = 1;
-
-    // ctx.fillStyle = '#000000'; 
+     ctx.fillStyle = 'rgb(' + parseInt(Math.random() * 255) + ',' + parseInt(255 - size/20 * 255) + ',' + parseInt(255 - size/20 * 255) + ')'
     // ctx.fillRect(this.x, height, 1, -height);
 
-    ctx.fillStyle = this.color; 
-    ctx.fillRect(this.x, height, 1, -this.h);
+    //ctx.fillStyle = this.color; 
+    //ctx.fillRect(this.x, this.y, 5, 5);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, 2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
   }
 }
 
 
-function render() {  
-  for(var i = 0; i < G.particles.length; i++) {
-    G.particles[i].move();
-    G.particles[i].draw();
+
+
+function render() {
+
+  
+
+  //ctx.clearRect(0, 0, width, height);
+  for(var i = 0; i < 1000; i++) {
+    var ball = G.createBall(x, y, Math.random() * 20);
+    if(ball)
+      ball.draw();
   }
 
-  //console.log(G.bars.length);
+
+  // x++;
+  // if (x > width) {
+  //   y++;
+  //   x = 0;
+
+  //   if (y > height) {
+  //     y = 0;
+  //   }
+  // }
+
+
+  //console.log(G.balls.length);
   requestAnimationFrame(render);
+  
 }
-
 
 
 
