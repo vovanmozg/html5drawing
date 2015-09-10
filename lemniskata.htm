@@ -1,0 +1,143 @@
+
+
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content='width=1024' name='viewport'>
+    <style>
+    body {
+      background: #333;
+      color: #bbb;
+    }
+
+  #wrapper
+   {
+
+   }
+    #cnv {
+      zborder: 1px solid #303030;
+
+
+      display: block;
+    }
+
+    </style>
+      <!-- link href="css.css" rel="stylesheet" media="all" / -->
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <canvas id="cnv" width="1001" height="541"></canvas>
+    </div>
+  
+    <script>
+
+
+var CUR = {x:0, y:0};
+var DOT1 = {x:0, y:0};
+var DOT2 = {x:0, y:0};
+var DOT3 = {x:500, y:250};
+var DOT4 = {x:0, y:0};
+var ALFA = 1;
+
+var T = 0;
+
+var canvas = document.getElementById("cnv")
+var context = canvas.getContext("2d");
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight;
+for (var x = 0.5; x < width; x += 10) {
+  context.moveTo(x, 0);
+  context.lineTo(x, height);
+}
+
+for (var y = 0.5; y < height; y += 10) {
+  context.moveTo(0, y);
+  context.lineTo(width, y);
+}
+
+context.strokeStyle = "#303030";
+context.stroke();
+
+context.beginPath();
+context.strokeStyle = "#777";
+
+setInterval('onePoint()', 1);
+
+
+DOT1.x = 0;
+DOT1.y = 0;
+
+
+function onePoint() {
+  calcDot1();
+  pset(DOT1.x, DOT1.y, context, '#0f8');
+
+  calcDot2();
+  pset(DOT2.x, DOT2.y, context, '#08f');
+  //line(500, 250, DOT1.x, DOT1.y, '#333', context);
+
+  T+=0.01; // время 
+}
+
+
+function calcDot1() {
+
+  //fi = T / 300;
+  //ro = Math.sqrt(2 * (200 * 200) * Math.cos(2 * fi));
+  //DOT1.x = 500 + ro * Math.cos(fi);
+  //DOT1.y = 250 + ro * Math.sin(fi);
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200))
+
+  DOT1.x = width / 2 + 180 * ro * Math.cos(T * 110);
+  DOT1.y = height / 2 + 180 * ro * Math.sin(T * 110);
+
+}
+
+function calcDot2() {
+  DOT2.x = DOT1.x - Math.sin(T/20);
+  DOT2.y = DOT1.y - Math.cos(T/20);
+}
+
+// function calcDot3() {
+
+//   var qx = Math.sin(T/100*7);
+//   var qy = Math.cos(T/100*7);
+//   DOT3.x = DOT2.x + 40 * qx;
+//   DOT3.y = DOT2.y + 40 * qy;
+// }
+
+// function calcDot4() {
+
+//   T2 = T;
+//   var qx = Math.sin(T/100*7);
+//   var qy = Math.cos(T/100*7);
+//   DOT4.x = DOT1.x - 10 * qx;
+//   DOT4.y = DOT1.y - 10 * qy;
+
+
+// }
+
+function line(x1, y1, x2, y2, color, context) {
+  context.strokeStyle = color;
+  context.beginPath();
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.stroke();
+}
+
+
+function pset(x, y, context, color) {
+  context.strokeStyle = color;
+  context.beginPath();
+  context.moveTo(x, y);
+  context.lineTo(x, y+1);
+  context.stroke();
+}
+
+    </script>
+
+  </body>
+</html>
