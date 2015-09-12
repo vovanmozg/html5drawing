@@ -34,19 +34,32 @@
     <script>
 
 
+
 var CUR = {x:0, y:0};
 var DOT1 = {x:0, y:0};
 var DOT2 = {x:0, y:0};
-var DOT3 = {x:500, y:250};
+var DOT3 = {x:0, y:0};
 var DOT4 = {x:0, y:0};
+var DOT5 = {x:0, y:0};
+var DOT6 = {x:0, y:0};
 var ALFA = 1;
 
 var T = 0;
+var N = 0;
 
+// количество столбцов изображений 
+var cols = 3;
+// количество строк изображений
+var rows = 15;
+// размер одного изображения
+var size = 200;
 var canvas = document.getElementById("cnv")
 var context = canvas.getContext("2d");
 var width = canvas.width = window.innerWidth;
-var height = canvas.height = window.innerHeight;
+var height = canvas.height = window.innerHeight * 20;
+
+
+
 for (var x = 0.5; x < width; x += 10) {
   context.moveTo(x, 0);
   context.lineTo(x, height);
@@ -63,62 +76,136 @@ context.stroke();
 context.beginPath();
 context.strokeStyle = "#777";
 
-setInterval('onePoint()', 1);
+setInterval('manyPoints()', 10);
 
 
 DOT1.x = 0;
 DOT1.y = 0;
 
 
+function manyPoints() {
+	for(var i = 0; i < 100; i++)
+		onePoint();
+}
+
+
 function onePoint() {
-  calcDot1();
-  pset(DOT1.x, DOT1.y, context, '#0f8');
+  var n = -1;
 
-  calcDot2();
-  pset(DOT2.x, DOT2.y, context, '#08f');
-  //line(500, 250, DOT1.x, DOT1.y, '#333', context);
+  for(var j = 1; j < 200; j+=1 ) {
 
-  T+=0.01; // время 
+	  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+	  pset(
+	  	center(n).x + size / 3 * ro * Math.cos(T * j),
+	  	center(n).y + size / 3 * ro * Math.sin(T * j),
+	  	'#f88'
+	  )
+  }
+
+
+
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 200),
+  	center(n).y + size / 3 * ro * Math.sin(T * 20),
+  	'#ff0'
+  )
+
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 20),
+  	center(n).y + size / 3 * ro * Math.sin(T * 20),
+  	'#ff0'
+  )
+
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 110),
+  	center(n).y + size / 3 * ro * Math.sin(T * 90),
+  	'#ff0'
+  )
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 100),
+  	center(n).y + size / 3 * ro * Math.sin(T * 100),
+  	'#0f8'
+  )
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 298),
+  	center(n).y + size / 3 * ro * Math.sin(T * 100),
+  	'#0f8'
+  )
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 290),
+  	center(n).y + size / 3 * ro * Math.sin(T * 100),
+  	'#0f8'
+  )
+
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 299),
+  	center(n).y + size / 3 * ro * Math.sin(T * 101),
+  	'#0f8'
+  )
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  DOT2.x = center(n).x + size / 3 * ro * Math.cos(T * 50);
+  DOT2.y = center(n).y + size / 3 * ro * Math.sin(T * 50);
+  pset(DOT2.x, DOT2.y, '#08f');
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  DOT3.x = center(n).x + size / 3 * ro * Math.cos(T * 60);
+  DOT3.y = center(n).y + size / 3 * ro * Math.sin(T * 60);
+  pset(DOT3.x, DOT3.y, '#0f8');
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  DOT4.x = center(n).x  + size / 3 * ro * Math.cos(T * 66.6);
+  DOT4.y = center(n).y + size / 3 * ro * Math.sin(T * 66.6);
+  pset(DOT4.x, DOT4.y, '#08f');
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  DOT5.x = center(n).x  + size / 3 * ro * Math.cos(T * 200);
+  DOT5.y = center(n).y + size / 3 * ro * Math.sin(T * 800);
+  pset(DOT5.x, DOT5.y, '#0f8');
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 100)); n++;
+  DOT6.x = center(n).x + size / 3 * ro * Math.cos(T * 100);
+  DOT6.y = center(n).y + size / 3 * ro * Math.sin(T * 100);
+  pset(DOT6.x, DOT6.y, '#08f');
+
+  T+=0.02; // время 
 }
 
 
-function calcDot1() {
+// возвращает координаты центра фигуры с номером n
+function center(n) {
+  var padding = 10;
+  var sizep = size + padding * 2;
+  var cols = parseInt( (width - padding * 2) / sizep);
+  var rows = parseInt( (height - padding * 2) / sizep);
+   
+  var col = n % cols;
+  var row = parseInt(n / cols);
 
-  //fi = T / 300;
-  //ro = Math.sqrt(2 * (200 * 200) * Math.cos(2 * fi));
-  //DOT1.x = 500 + ro * Math.cos(fi);
-  //DOT1.y = 250 + ro * Math.sin(fi);
+  
 
-  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200))
-
-  DOT1.x = width / 2 + 180 * ro * Math.cos(T * 110);
-  DOT1.y = height / 2 + 180 * ro * Math.sin(T * 110);
-
+  return {
+  	x: padding + (size + padding * 2) * (col + 1 / 2),
+  	y: padding + (size + padding * 2) * (row + 1 / 2)
+  }
+  //x = padding + sizep / 2 * ((width - padding * 2) % sizep)
+  //y = padding + sizep / 2 * ((height - padding * 2) % sizep)
 }
 
-function calcDot2() {
-  DOT2.x = DOT1.x - Math.sin(T/20);
-  DOT2.y = DOT1.y - Math.cos(T/20);
-}
-
-// function calcDot3() {
-
-//   var qx = Math.sin(T/100*7);
-//   var qy = Math.cos(T/100*7);
-//   DOT3.x = DOT2.x + 40 * qx;
-//   DOT3.y = DOT2.y + 40 * qy;
-// }
-
-// function calcDot4() {
-
-//   T2 = T;
-//   var qx = Math.sin(T/100*7);
-//   var qy = Math.cos(T/100*7);
-//   DOT4.x = DOT1.x - 10 * qx;
-//   DOT4.y = DOT1.y - 10 * qy;
-
-
-// }
 
 function line(x1, y1, x2, y2, color, context) {
   context.strokeStyle = color;
@@ -129,7 +216,7 @@ function line(x1, y1, x2, y2, color, context) {
 }
 
 
-function pset(x, y, context, color) {
+function pset(x, y, color) {
   context.strokeStyle = color;
   context.beginPath();
   context.moveTo(x, y);
