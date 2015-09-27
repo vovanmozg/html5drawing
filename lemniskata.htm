@@ -52,7 +52,7 @@ var cols = 3;
 // количество строк изображений
 var rows = 15;
 // размер одного изображения
-var size = 200;
+var size = 400;
 var canvas = document.getElementById("cnv")
 var context = canvas.getContext("2d");
 var width = canvas.width = window.innerWidth;
@@ -76,7 +76,7 @@ context.stroke();
 context.beginPath();
 context.strokeStyle = "#777";
 
-setInterval('manyPoints()', 10);
+setInterval('manyPoints()', 20);
 
 
 DOT1.x = 0;
@@ -84,7 +84,7 @@ DOT1.y = 0;
 
 
 function manyPoints() {
-	for(var i = 0; i < 100; i++)
+	for(var i = 0; i < 100; i+=10)
 		onePoint();
 }
 
@@ -92,16 +92,39 @@ function manyPoints() {
 function onePoint() {
   var n = -1;
 
-  for(var j = 1; j < 200; j+=1 ) {
+  for(var j = 1; j < 100; j++ ) {
+	  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+	  pset(
+	  	center(n).x + size / 3 * ro * Math.cos(T * 100) * Math.cos(T * 110),
+	  	center(n).y + size / 3 * ro * Math.sin(T * 100) * Math.sin(T * j*10),
+	  	'#ddd'
+	  )
+	}
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 100) * Math.cos(T * 30),
+  	center(n).y + size / 3 * ro * Math.sin(T * 100) * Math.sin(T * 60),
+  	'#88f'
+  )
+
+
+  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
+  pset(
+  	center(n).x + size / 3 * ro * Math.cos(T * 4 * 20) + 5 * Math.cos(T*100),
+  	center(n).y + size / 3 * ro * Math.sin(T * 4 * 20) + 5 * Math.sin(T*100),
+  	'#8f8'
+  )
+
+  for(var j = 1; j < 10; j++ ) {
 
 	  ro = ALFA * Math.sqrt(2 * Math.cos(2 * T * 200)); n++;
 	  pset(
-	  	center(n).x + size / 3 * ro * Math.cos(T * j),
-	  	center(n).y + size / 3 * ro * Math.sin(T * j),
+	  	center(n).x + size / 3 * ro * Math.cos(T * j * 20),
+	  	center(n).y + size / 3 * ro * Math.sin(T * j * 20),
 	  	'#f88'
 	  )
   }
-
 
 
 
