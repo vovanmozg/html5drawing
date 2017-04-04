@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <style>
+        body {
+            background: #000;
+            color: #bbb;
+            margin: 0;
+        }
+
+        #cnv {
+            margin: 0 auto;
+            display: block;
+        }
+
+    </style>
+    <!-- link href="css.css" rel="stylesheet" media="all" / -->
+    <script src="./color-scheme.js"></script>
+
+</head>
+<body>
+<div id="wrapper">
+
+</div>
+
+
+<script>
+
+
+var canvas, context;
+var start = false;
+var px1 = 0, py1 = 0, px2 = 0, py2 = 0, px3 = 0, py3 = 0;
+var R1P = 0, R2P = 0;
+
+var canvas_width = window.innerWidth;
+var canvas_height = window.innerHeight;
+
+// color generator
+var cg;
+
+// gear teeth generator
+var gtg;
+
+// canvas center
+var center = {
+  x: canvas_width / 2,
+  y: canvas_height / 2
+}
+
+function main() {
+  canvas = document.createElement('canvas');
+  canvas.id = 'cnv';
+
+  document.body.appendChild(canvas); // adds the canvas to the body element
+  document.getElementById('wrapper').appendChild(canvas);
+
+  context = canvas.getContext("2d");
+
+  canvas.width = canvas_width + 1;
+  canvas.height = canvas_height + 1;
+
+
+  cg = new InitColorGenerator();
+
+  gtg = new GearTeethGenerator();
+
+
+  setInterval('circle()', 10);
+
+  
+
+}
+
+
+  function circle() {
+
+    // var A = {
+    //   x: rnd(10),
+    //   y: rnd(10)
+    // };
+
+    var R1, R2;
+
+    if(R1P == 0) {
+      R1 = rnd(300);
+      R2 = R1 + rnd(R1/2);    
+    }
+    else {
+      R1 = R1P + rnd(10)-5
+      R2 = R2P + rnd(10)-5
+    }
+    
+    
+    R1P = R1;
+    R2P = R2;
+    
+    var gearTeethAmount = gtg.count();
+
+    
+
+
+
+
+
+    color = cg.color();
+
+    var lw = 0.5;
+
+    
+
+    //context.lineDashOffset = 3;
+    
+    for (var i = 0; i < 360; i += S) {
+
+      var g1 = Math.PI * i / 180;
+      var g2 = Math.PI * (i + S / 2) / 180;
+      var g3 = Math.PI * (i - S / 2) / 180;
+
+      var x1 = center.x + R1 * Math.sin(g1);//+A.x);
+      var y1 = center.y + R1 * Math.cos(g1);//+A.y);
+      var x2 = center.x + R2 * Math.sin(g2);
+      var y2 = center.y + R2 * Math.cos(g2);
+      var x3 = center.x + R2 * Math.sin(g3);
+      var y3 = center.y + R2 * Math.cos(g3);
+
+      //var x1d = x1*Math.cos(Math.PI/4) - y1*Math.sin(Math.PI/4);
+      //var y1d = x1*Math.sin(Math.PI/4) + y1*Math.cos(Math.PI/4);
+
+      //if(start == true) {
+        line(x1, y1, x2, y2, color, lw, context);
+        line(x1, y1, x3, y3, color, lw, context);
+        //pset(x1, y1, whitecolor, context);
+        //pset(px1, py1, color, context);
+      //}
+
+      px1 = x1; py1 = y1; px2 = x2; py2 = y2; px3 = x3; py3 = y3;
+      start = true;
+    }
+  }
+
+  /**
+  Return random color generator.
+  There are two chemes
+  - color-scheme.js
+  - uniform random colors
+  */
+  function InitColorGenerator() {
+    var generators = ['scheme', 'rnd'];
+    var generator_name = generators[rnd(generators.length)];
+    var color;
+
+    switch(generator_name) {
+      case 'scheme':
+        var generator = new function() {
+          this.scheme = new ColorScheme;
+          this.scheme.from_hue(21)
+              .scheme('triade')
+              .variation('soft');
+          this.color = function() {
+            return '#' + this.scheme.colors()[rnd(12)];  
+          }
+        }
+        break;
+      case 'rnd':
+        var generator = new function() {
+          this.color = function() {
+
+            if (rnd(10) > 3) {
+              color = {
+                r: rnd(255),
+                g: rnd(255),
+                b: rnd(255),
+              }
+              color = "rgba(" + 255 + "," + color.g + "," + color.b + ",0.4)"
+            }
+            else {
+              color = {
+                r: 0,
+                g: 0,
+                b: 0,
+              }
+              color = "rgba(" + color.r + "," + color.g + "," + color.b + ",0.1)"
+            }
+
+            return color;
+          }
+        }
+        break;
+    }
+    
+    // generate color, using initialized generator
+    this.color = function() {
+      return generator.color()
+    }    
+  }
+
+  function GearTeethGenerator() {
+    this.count = function() {
+      var S = [360 / 6, 360 / 12, 360 / 24, 360 / 48][rnd(4)];
+
+    // if(rnd(10) > 5) {
+    //   S *= 1.5;
+    // }
+    
+    };
+  }
+
+  function rnd(v) {
+    return Math.floor(Math.random() * v)
+  }
+
+  function line(x1, y1, x2, y2, color, lw, context) {
+    context.strokeStyle = color;
+    context.lineWidth = lw;
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.stroke();
+  }
+
+
+  function pset(x, y, color, context) {
+    context.strokeStyle = color;
+    context.beginPath();
+    context.moveTo(x, y);
+    context.lineTo(x, y + 1);
+    context.stroke();
+  }
+
+main();
+
+</script>
+
+</body>
+</html>
