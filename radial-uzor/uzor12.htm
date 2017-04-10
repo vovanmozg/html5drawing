@@ -17,6 +17,7 @@
     </style>
     <!-- link href="css.css" rel="stylesheet" media="all" / -->
     <script src="./color-scheme.js"></script>
+    <script src="./html2canvas.js"></script>
 
 </head>
 <body>
@@ -27,14 +28,18 @@
 
 <script>
 
+window.zhukis = {}
 
 var canvas, context;
 var start = false;
-var px1 = 0, py1 = 0, px2 = 0, py2 = 0, px3 = 0, py3 = 0;
-var R1P = 0, R2P = 0;
+//var px1 = 0, py1 = 0, px2 = 0, py2 = 0, px3 = 0, py3 = 0;
+
 
 var canvas_width = window.innerWidth;
 var canvas_height = window.innerHeight;
+
+// radius generator
+var Rg;
 
 // color generator
 var cg;
@@ -48,6 +53,10 @@ var center = {
   y: canvas_height / 2
 }
 
+var S;
+
+var interval = 10;
+
 function main() {
   canvas = document.createElement('canvas');
   canvas.id = 'cnv';
@@ -60,82 +69,94 @@ function main() {
   canvas.width = canvas_width + 1;
   canvas.height = canvas_height + 1;
 
-
   cg = new InitColorGenerator();
 
   gtg = new GearTeethGenerator();
 
+  Rg = new RadiusGenerator();
 
-  setInterval('circle()', 10);
+  setInterval('circle()', interval);
 
-  
+  //setInterval('screenshot()', 10000);  
 
 }
 
 
+
   function circle() {
-
-    // var A = {
-    //   x: rnd(10),
-    //   y: rnd(10)
-    // };
-
     var R1, R2;
-
-    if(R1P == 0) {
-      R1 = rnd(300);
-      R2 = R1 + rnd(R1/2);    
-    }
-    else {
-      R1 = R1P + rnd(10)-5
-      R2 = R2P + rnd(10)-5
-    }
-    
-    
-    R1P = R1;
-    R2P = R2;
-    
-    var gearTeethAmount = gtg.count();
-
-    
-
-
-
-
-
+    var r = Rg.radiuses();
+    var gearTeethAmount = gtg.count(r);
     color = cg.color();
 
-    var lw = 0.5;
-
+    var lw = 1;
     
 
     //context.lineDashOffset = 3;
     
-    for (var i = 0; i < 360; i += S) {
+    for (var i = 0; i < 360; i += gearTeethAmount) {
 
-      var g1 = Math.PI * i / 180;
-      var g2 = Math.PI * (i + S / 2) / 180;
-      var g3 = Math.PI * (i - S / 2) / 180;
+      var drawSegment = function() {
+        var g1 = Math.PI * i / 180;
+        var g2 = Math.PI * (i + gearTeethAmount / 2) / 180;
+        var g3 = Math.PI * (i - gearTeethAmount / 2) / 180;
 
-      var x1 = center.x + R1 * Math.sin(g1);//+A.x);
-      var y1 = center.y + R1 * Math.cos(g1);//+A.y);
-      var x2 = center.x + R2 * Math.sin(g2);
-      var y2 = center.y + R2 * Math.cos(g2);
-      var x3 = center.x + R2 * Math.sin(g3);
-      var y3 = center.y + R2 * Math.cos(g3);
+        var x1 = center.x + r.r1 * Math.sin(g1);//+A.x);
+        var y1 = center.y + r.r1 * Math.cos(g1);//+A.y);
+        var x2 = center.x + r.r2 * Math.sin(g2);
+        var y2 = center.y + r.r2 * Math.cos(g2);
+        var x3 = center.x + r.r2 * Math.sin(g3);
+        var y3 = center.y + r.r2 * Math.cos(g3);
 
-      //var x1d = x1*Math.cos(Math.PI/4) - y1*Math.sin(Math.PI/4);
-      //var y1d = x1*Math.sin(Math.PI/4) + y1*Math.cos(Math.PI/4);
+        //var x1d = x1*Math.cos(Math.PI/4) - y1*Math.sin(Math.PI/4);
+        //var y1d = x1*Math.sin(Math.PI/4) + y1*Math.cos(Math.PI/4);
 
-      //if(start == true) {
-        line(x1, y1, x2, y2, color, lw, context);
-        line(x1, y1, x3, y3, color, lw, context);
-        //pset(x1, y1, whitecolor, context);
-        //pset(px1, py1, color, context);
-      //}
+        //if(start == true) {
+          var color2 = "rgba(0,0,0,0.5)";
+          line(x1, y1, x2, y2, color2, 2, context);
+          line(x1, y1, x3, y3, color2, 2, context);
 
-      px1 = x1; py1 = y1; px2 = x2; py2 = y2; px3 = x3; py3 = y3;
-      start = true;
+          line(x1, y1, x2, y2, color, lw, context);
+          line(x1, y1, x3, y3, color, lw, context);
+          //pset(x1, y1, whitecolor, context);
+          //pset(px1, py1, color, context);
+        //}
+
+        //px1 = x1; py1 = y1; px2 = x2; py2 = y2; px3 = x3; py3 = y3;
+        start = true;
+      }
+
+      drawSegment();
+      
+    }
+  }
+
+  function WidthGenerator() {
+
+  }
+
+  function RadiusGenerator() {
+    this.R1P = 0;
+    this.R2P = 0;
+
+    this.radiuses = function() {
+      //if(this.R1P == 0) {
+      if(1) {
+        R1 = rnd(600);
+        R2 = R1 + rnd(R1/2);    
+      }
+      else {
+        R1 = this.R1P + rnd(10)-5
+        R2 = this.R2P + rnd(10)-5
+      }
+      
+      this.R1P = R1;
+      this.R2P = R2;
+
+      return {
+        r1: R1,
+        r2: R2
+      }
     }
   }
 
@@ -146,68 +167,111 @@ function main() {
   - uniform random colors
   */
   function InitColorGenerator() {
-    var generators = ['scheme', 'rnd'];
-    var generator_name = generators[rnd(generators.length)];
+    var generators = [];
     var color;
 
-    switch(generator_name) {
-      case 'scheme':
-        var generator = new function() {
+    generators.push(new function() {
+          var hue = rnd(360);
+          var schemeType = rnda(['mono', 'contrast', 'triade', 'tetrade', 'analogic']);
+          var variation = rnda(['default', 'pastel', 'soft', 'light', 'hard', 'pale']);
           this.scheme = new ColorScheme;
-          this.scheme.from_hue(21)
-              .scheme('triade')
-              .variation('soft');
+          this.scheme.from_hue(hue)
+              .scheme(schemeType)
+              .variation(variation);
           this.color = function() {
-            return '#' + this.scheme.colors()[rnd(12)];  
+            if(rndb()) {
+              return '#' + this.scheme.colors()[rnd(12)];    
+            }
+            else {
+              return '#' + this.scheme.colors()[rnd(12)];    
+              return '#000000';
+            }
+            
           }
-        }
-        break;
-      case 'rnd':
-        var generator = new function() {
+        });
+
+    generators.push(new function() {
           this.color = function() {
 
-            if (rnd(10) > 3) {
-              color = {
-                r: rnd(255),
-                g: rnd(255),
-                b: rnd(255),
-              }
+            if (rndb()) {
+              color = { r: rnd(255), g: rnd(255), b: rnd(255) }
               color = "rgba(" + 255 + "," + color.g + "," + color.b + ",0.4)"
             }
             else {
-              color = {
-                r: 0,
-                g: 0,
-                b: 0,
-              }
+              color = { r: 0, g: 0, b: 0 }
               color = "rgba(" + color.r + "," + color.g + "," + color.b + ",0.1)"
             }
 
             return color;
           }
-        }
-        break;
-    }
-    
+        });
+
+    var generator = rnda(generators);
     // generate color, using initialized generator
     this.color = function() {
       return generator.color()
     }    
   }
 
+  /**
+  * Count of teeth
+  */
   function GearTeethGenerator() {
-    this.count = function() {
-      var S = [360 / 6, 360 / 12, 360 / 24, 360 / 48][rnd(4)];
+    // repeating flag. If true each call .count() will return value, generated previous time
+    this.repeatAll = false; rndb();
+    //this.repeatShift = rndb();
+    // Degree of rotation
+    this.shift = 1;
+    // result cache
+    this.result = 0;
 
-    // if(rnd(10) > 5) {
-    //   S *= 1.5;
-    // }
-    
+    /**
+    * @param { r1: Integer, r2: Integer }
+    */
+    this.count = function(r) {
+      
+      if(this.repeatAll && this.result > 0) {
+        return this.result;
+      }
+
+      var MultipleOf = function(r) {
+        var rRelated = rndb();
+        if(rRelated) {
+          if (r.r1 < 200) return [360/3, 360/6, 360/12, 360/24];
+          if (r.r1 < 400) return [360/30];          
+        }
+        else {
+          return rnda([
+              [360/3, 360/6, 360/12, 360/18, 360/24, 360/30, 360/48],
+              [360/3, 360/6, 360/12, 360/18],
+              [360/6, 360/96],
+              [360/30]
+            ]);
+        }
+      }
+
+      var m = MultipleOf(r);
+      var shift = rnd(10) 
+      var S = rnda(m);
+      
+      if(rndb()) {
+        S *= this.shift;
+      }
+      
+      return this.result = S > 0 ? S : 360 / 6;
     };
   }
 
   function rnd(v) {
     return Math.floor(Math.random() * v)
+  }
+
+  function rndb() {
+    return rnd(10) > 5 ? true : false
+  }
+
+  function rnda(ar) {
+    return ar[rnd(ar.length)]
   }
 
   function line(x1, y1, x2, y2, color, lw, context) {
@@ -219,7 +283,6 @@ function main() {
     context.stroke();
   }
 
-
   function pset(x, y, color, context) {
     context.strokeStyle = color;
     context.beginPath();
@@ -227,6 +290,21 @@ function main() {
     context.lineTo(x, y + 1);
     context.stroke();
   }
+
+function screenshot() {
+  html2canvas(document.body, {
+            onrendered: function (canvas) {
+                var url = canvas.toDataURL();
+                var a = document.createElement('a');
+                a.setAttribute('href', url);
+                a.setAttribute('download', rnd(1000000)+"uzor.jpeg");
+                
+                document.body.appendChild(a);
+                a.click();
+                //a.remove();
+            }
+        });
+}
 
 main();
 
