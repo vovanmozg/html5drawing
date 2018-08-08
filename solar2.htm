@@ -1,0 +1,146 @@
+<html>
+<head>
+  <script src="https://unpkg.com/react@15/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #bbb;
+  }
+
+  #canvas, #orbits-canvas {
+    position: absolute;
+  }
+
+  #orbits-canvas {
+    border: 1px solid red;
+  }
+
+  </style>
+</head>
+<body>
+
+
+<canvas id="canvas"></canvas>
+<canvas id="orbits-canvas"></canvas>
+</body>
+<script>
+
+const orbitsCanvas = document.getElementById('orbits-canvas');
+const orbCtx = orbitsCanvas.getContext('2d');
+orbitsCanvas.width = window.innerWidth;
+orbitsCanvas.height = window.innerHeight/10*10;
+
+
+orbCtx.globalAlpha = 0.5;
+
+orbCtx.fillStyle = '#ff0055';
+orbCtx.beginPath();
+orbCtx.arc(500, 400, 50, 0, 2*Math.PI);
+orbCtx.closePath();
+orbCtx.fill();
+
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const width = canvas.width = window.innerWidth;
+const height = canvas.height = window.innerHeight/10*10;
+let counter = 0;
+
+const point = (x, y, size, color) => {
+  ctx.globalAlpha = 0.5;
+  color = color || '#ff0055';
+  ctx.fillStyle = color;
+  // ctx.fillRect(this.x, height, 1, -height);
+  //ctx.fillStyle = this.color; 
+  //ctx.fillRect(this.x, this.y, 5, 5);
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, 2*Math.PI);
+  ctx.closePath();
+  ctx.fill();
+}
+
+const orbit = (xCenter, yCenter, x2, y2, size) => {
+  orbCtx.strokeStyle = '#666';
+  orbCtx.beginPath();
+  orbCtx.arc(xCenter, yCenter, size, 0, 2*Math.PI);
+  orbCtx.closePath();
+  orbCtx.stroke();
+
+  orbCtx.beginPath();
+  orbCtx.moveTo(xCenter, yCenter);
+  orbCtx.lineTo(x2,y2);
+  orbCtx.stroke();
+
+}
+
+
+function render() {  
+  let orbitRadius;
+  let speed;
+
+  orbCtx.clearRect(0, 0, width, height);
+  counter++;
+
+  ctx.globalAlpha = 0.007;
+  ctx.fillStyle = '#000000';
+  //ctx.fillRect(0, 0, width, height);
+
+  const baseSpeed = 5;
+
+  // sun
+  // point(width/2, height/2, 1, 'yellow');
+
+
+  //earth
+  orbitRadius = 10;
+  speed = (240/baseSpeed);
+  zx = width/2 + Math.sin(counter/speed) * orbitRadius;
+  zy = height/2 + Math.cos(counter/speed) * orbitRadius;
+  orbit(width/2, height/2, zx, zy, orbitRadius);
+
+  // moon
+  orbitRadius = height/4;
+  speed = (240/baseSpeed);
+  mx = zx + Math.sin(counter/speed) * orbitRadius;
+  my = zy - Math.cos(counter/speed) * orbitRadius;
+  orbit(zx, zy, mx, my, orbitRadius);
+  // point(mx, my, 1, '#777777');
+
+  // moon2
+  orbitRadius = height/32;
+  speed = (120/baseSpeed);
+  m2x = mx + Math.sin(counter/speed) * orbitRadius;
+  m2y = my + Math.cos(counter/speed) * orbitRadius;
+  orbit(mx, my, m2x, m2y, orbitRadius);
+  point(m2x, m2y, 1, '#33f');
+
+  // moon3
+  orbitRadius = height/8;
+  speed = (240/baseSpeed);
+  m3x = m2x + Math.sin(counter/speed) * orbitRadius;
+  m3y = m2y - Math.cos(counter/speed) * orbitRadius;
+  orbit(m2x, m2y, m3x, m3y, orbitRadius);
+  point(m3x, m3y, 1, '#963');
+
+  // moon4
+  orbitRadius = height/64;
+  speed = (15/baseSpeed);
+  m4x = m3x - Math.sin(counter/speed) * orbitRadius;
+  m4y = m3y + Math.cos(counter/speed) * orbitRadius;
+  orbit(m3x, m3y, m4x, m4y, orbitRadius);
+  point(m4x, m4y, 1, '#ff0');  
+
+  requestAnimationFrame(render);
+}
+
+
+
+render();
+
+
+</script>
+</body>
+</html>
