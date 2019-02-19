@@ -1,0 +1,113 @@
+<html>
+<head>
+	<script id="vertexShader" type="x-shader/x-vertex">
+    attribute vec3 a_position;
+    attribute vec3 a_color;
+    uniform vec3 u_position;
+    varying vec3 v_color;
+
+    void main(void) {
+        v_color = a_color;
+        gl_Position = vec4(u_position + a_position, 1.0);
+    }
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec3 v_color;
+
+    void main(void) {
+        gl_FragColor = vec4(v_color.rgb, 1.0);
+    }
+</script>
+
+	<script>
+
+var gl; // глобальная переменная для контекста WebGL
+
+function start() {
+
+var canvas = document.getElementById("glcanvas");
+
+
+gl = canvas.getContext("webgl")
+
+// продолжать только если WebGL доступен и работает
+
+
+gl.clearColor(0.0, 0.0, 0.0, 1.0);                      // установить в качестве цвета очистки буфера цвета черный, полная непрозрачность
+gl.enable(gl.DEPTH_TEST);                               // включает использование буфера глубины
+gl.depthFunc(gl.LEQUAL);                                // определяет работу буфера глубины: более ближние объекты перекрывают дальние
+gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);      // очистить буфер цвета и буфер глубины.
+  
+var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vertexShader, document.getElementById('vertexShader').text);
+gl.compileShader(vertexShader);
+
+var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fragmentShader, document.getElementById('fragmentShader').text);
+gl.compileShader(fragmentShader);
+
+
+var program = gl.createProgram();
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
+gl.linkProgram(program);
+
+var vertexBuffer = gl.createBuffer();
+var vertices = [0, 0, 0, 0.5, 1, 0, 1, 0, 1];
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices),  gl.STATIC_DRAW);
+
+var colorBuffer = gl.createBuffer();
+var colors = [1, 0, 0, 0, 0, 0, 0, 0, 1];
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
+
+// Получим местоположение переменных в программе шейдеров
+var uPosition = gl.getUniformLocation(program, 'u_position');
+var aPosition = gl.getAttribLocation(program, 'a_position');
+var aColor = gl.getAttribLocation(program, 'a_color');
+
+// Укажем какую шейдерную программу мы намерены далее использовать
+gl.useProgram(program);
+
+// Передаем в uniform-переменную положение треугольника
+gl.uniform3fv(uPosition, [0, 0, 0]);
+
+// Связываем данные цветов
+gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+gl.enableVertexAttribArray(aColor);
+// Вторым аргументом передаём размерность, RGB имеет 3 компоненты
+gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+
+// И вершин
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+gl.enableVertexAttribArray(aPosition);
+gl.vertexAttribPointer(aPosition, 3, gl.FLOAT, false, 0, 0);
+
+// Очищаем сцену, закрашивая её в белый цвет
+gl.clearColor(1.0, 1.0, 1.0, 1.0);
+gl.clear(gl.COLOR_BUFFER_BIT);
+
+// Рисуем треугольник
+// Третьим аргументом передаём количество вершин геометрии
+gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+
+}
+</script>
+</head>
+
+<body onload="start();">
+  
+
+
+    <canvas id="glcanvas" style="border: none;" width="500" height="500"></canvas>
+
+    <br/>
+   
+</body>
+
