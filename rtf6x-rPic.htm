@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>rPic</title>
+    <link type="text/css" rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<style>
+    body {
+        height: 100vh;
+    }
+
+    .items {
+        /*width: 800px;*/
+        display: flex;
+        padding: 0;
+        flex-wrap: wrap;
+        height: 100vh;
+        align-content: center;
+        margin: 0 auto;
+    }
+
+    .items__item {
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 0;
+        width: 1px;
+        height: 1px;
+    }
+</style>
+
+<div class="items"></div>
+
+<script>
+  var width = Math.floor(window.innerWidth / 2);
+  var height = Math.floor(window.innerWidth / 2);
+  if (window.innerWidth > window.innerHeight) {
+    width = Math.floor(window.innerHeight / 2);
+    height = Math.floor(window.innerHeight / 2);
+  }
+  var prevXColor;
+  var prevYColor;
+  var colors = [];
+  var letters = '0123456789ABCDEF';
+
+  function getRandomColor() {
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * letters.length)];
+    }
+    colors.push(color);
+    return color;
+  }
+
+  function getLetterVariants(letterX, letterY, high) {
+    var currentLetters = [letters[letterY]];
+    var middle = Math.round((letterX + letterY) / 2);
+    if (high) {
+      // console.log('middle: ', letterX, letterY, middle);
+      if (letterY > 0) {
+        currentLetters.push([letters[letterY - 1]]);
+      } else {
+        currentLetters.push([letters[letterY + 1]]);
+      }
+      if (letterY + 1 < letters.length) {
+        currentLetters.push([letters[letterY + 1]]);
+      } else {
+        currentLetters.push([letters[letterY - 1]]);
+      }
+    } else {
+      // console.log('middle: ', letterX, letterY, middle);
+      currentLetters.push([letters[middle]]);
+      currentLetters.push([letters[letterX]]);
+      if (letterX > 0) {
+        currentLetters.push([letters[letterX - 1]]);
+      } else {
+        currentLetters.push([letters[letterX + 1]]);
+      }
+      if (letterX + 1 < letters.length) {
+        currentLetters.push([letters[letterX + 1]]);
+      } else {
+        currentLetters.push([letters[letterX - 1]]);
+      }
+    }
+    return currentLetters;
+  }
+
+  function getNotRandomColor(index) {
+    if (!prevXColor) {
+      prevXColor = getRandomColor();
+      return prevXColor;
+    }
+    var color = '#';
+
+    prevXColor = colors[index - 1];
+    prevYColor = colors[index - 1];
+    if (index + 1 >= width) {
+      prevYColor = colors[index + 1 - width];
+    }
+    if (!(index + 1 % width)) {
+      prevXColor = colors[index + 1 - width];
+    }
+
+    for (var i = 0; i < 6; i++) {
+      var currentLetterX = letters.indexOf(prevXColor[i + 1]);
+      var currentLetterY = letters.indexOf(prevYColor[i + 1]);
+      var high = index + 1 >= width && (i === 0 || i === 2 || i === 4);
+
+      var currentLetters = getLetterVariants(currentLetterX, currentLetterY, high);
+
+      color += currentLetters[Math.floor(Math.random() * currentLetters.length)];
+    }
+    colors.push(color);
+    return color;
+  }
+
+  var container = document.getElementsByClassName('items')[0];
+  container.style.width = width + 'px';
+  var html = '';
+  for (var i = 0; i < (width * height); i++) {
+    html += '<div class="items__item" style="background: ' + getNotRandomColor(i) + '"></div>';
+  }
+  container.innerHTML = html;
+</script>
+
+</body>
+</html>

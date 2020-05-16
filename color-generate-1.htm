@@ -1,0 +1,210 @@
+<html>
+<head>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #bbb;
+  }
+
+  #canvas, #orbits-canvas {
+    
+  }
+
+  #video {
+    border: 1px solid white;
+  }
+
+
+
+
+
+  </style>
+</head>
+<body>
+
+<div id="sky" >
+  
+  <div id="box"></div>
+</div>  
+
+
+
+<canvas id="canvas"></canvas>
+<video id="video" width="64" height="48" autoplay ></video>
+</body>
+<script>
+
+var video = document.getElementById('video');
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const width = canvas.width = window.innerWidth;
+const height = canvas.height = window.innerHeight/10*10/2;
+let counter = 0;
+
+const point = (x, y, size, color) => {
+  ctx.globalAlpha = 0.5;
+  color = color || '#ff0055';
+  ctx.fillStyle = color;
+  // ctx.fillRect(this.x, height, 1, -height);
+  //ctx.fillStyle = this.color; 
+  //ctx.fillRect(this.x, this.y, 5, 5);
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, 2*Math.PI);
+  ctx.closePath();
+  ctx.fill();
+}
+
+
+let radius = 5;
+
+function render() {  
+
+  
+  
+  let speed;
+
+  counter++;
+
+  //ctx.globalAlpha = 0.007;
+  ctx.fillStyle = '#000000';
+  //ctx.fillRect(0, 0, width, height);
+
+
+
+
+  const baseSpeed = 5;
+
+  let x = Math.random()*width;
+  let y = Math.random()*height;
+
+  //x = 100 + Math.random()*100;
+  //y = 100 + Math.random()*100;
+  
+  //x = 100;
+  //y = 100;
+  
+
+
+  //let x = Math.random() * width;
+  //let y = Math.random() * height;
+
+  //point(x, y, 1, '#ff0');
+
+  //v = v + 20;
+  
+  // Get the CanvasPixelArray from the given coordinates and dimensions.
+  var imgd = ctx.getImageData(x - radius, y - radius, radius * 2, radius * 2);
+  
+  //console.log(imgd)
+  var pix = imgd.data;
+
+  let max = 1;
+  // Loop over each pixel and invert the color.
+  let ku = 0;
+  for (var i = 0, n = pix.length; i < n; i += 4) {
+    let r = pix[i]; // red
+    let g = pix[i + 1]; // green
+    let b = pix[i + 2]; // blue
+
+    if(r > 0 || g > 0 || b > 0) {
+      ku = 1
+      break 
+    }    
+    //max = r != 255 && r > max ? r : max;
+  }
+
+
+
+  if (ku == 0) {
+    point(x, y, 3, '#F00');
+    //console.log(pix)
+    //debugger
+  } else {
+    point(x, y, 1, '#fff')
+    point(x-radius, y-radius, 1, '#00f')
+    point(x+radius, y-radius, 1, '#00f')
+    point(x-radius, y+radius, 1, '#00f')
+    point(x+radius, y+radius, 1, '#00f')
+  }
+
+
+  
+  
+
+  //color = 'rgb(' + (max + 10) + ',0,0)';
+  //console.log(max)
+
+
+
+
+
+  // Draw the ImageData at the given (x,y) coordinates.
+  //ctx.putImageData(imgd, x - radius, y - radius)
+
+  //setInterval(() => (requestAnimationFrame(render)), 100)
+  
+
+  requestAnimationFrame(render)
+  
+}
+
+for(i = 0; i < 1; i++) {
+  //render();  
+}
+
+// function ku2() {
+//   ctx.drawImage(video, 0, 0, 320, 240);
+//   //requestAnimationFrame(ku2);
+// }
+
+//setInterval(ku2, 100);
+
+
+// Get access to the camera!
+//if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+    // Not adding `{ audio: true }` since we only want video now
+    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+        //video.src = window.URL.createObjectURL(stream);
+        video.srcObject = stream;
+        video.play();
+
+        //console.log(stream)
+        
+        
+    });
+//}
+
+
+function renderVideo() {
+  ctx.drawImage(video, 0, 0, 320, 240);
+  //requestAnimationFrame(render)
+
+  var imgd = ctx.getImageData(0, 0, 320, 240);
+  var pix = imgd.data;
+
+  for (var i = 0, n = pix.length; i < n; i += 4) {
+    let r = pix[i]; // red
+    let g = pix[i + 1]; // green
+    let b = pix[i + 2]; // blue
+
+    if(i % (4) == 0) {
+      point(i/4 % 320, i/4 / 320, 1, 'rgb('+(255-r)+','+(255-g)+','+(255-b)+')');  
+      //point(320,240,10,'#F00')
+    }
+    
+  }
+  console.log(pix[0])
+}
+
+
+setInterval(renderVideo, 1000)
+
+
+
+
+</script>
+</body>
+</html>

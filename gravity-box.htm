@@ -1,0 +1,137 @@
+<html>
+<head>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #bbb;
+  }
+
+  #canvas, #orbits-canvas {
+    position: absolute;
+  }
+
+  #box {
+    position: absolute;
+    left: 50%;
+    top: 2cm;
+    width: 1cm;
+    height: 1cm;
+    background-color: red;
+  }
+
+  #sky {
+    background: #333; width: 100%; height: 10cm;    
+  }
+
+  </style>
+</head>
+<body>
+
+<div id="sky" >
+  
+  <div id="box"></div>
+</div>  
+
+
+
+<canvas id="canvas"></canvas>
+</body>
+<script>
+
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const width = canvas.width = window.innerWidth;
+const height = canvas.height = window.innerHeight/10*10;
+let counter = 0;
+
+const point = (x, y, size, color) => {
+  ctx.globalAlpha = 0.5;
+  color = color || '#ff0055';
+  ctx.fillStyle = color;
+  // ctx.fillRect(this.x, height, 1, -height);
+  //ctx.fillStyle = this.color; 
+  //ctx.fillRect(this.x, this.y, 5, 5);
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, 2*Math.PI);
+  ctx.closePath();
+  ctx.fill();
+}
+
+
+let box = document.getElementById('box');
+let sky = document.getElementById('sky');
+
+// function render() {  
+//   let orbitRadius;
+//   let speed;
+
+//   counter++;
+
+//   ctx.globalAlpha = 0.007;
+//   ctx.fillStyle = '#000000';
+//   //ctx.fillRect(0, 0, width, height);
+
+//   const baseSpeed = 5;
+
+//   // sun
+//   // point(width/2, height/2, 1, 'yellow');
+
+
+//   //let x = Math.random() * width;
+//   //let y = Math.random() * height;
+
+//   //point(x, y, 1, '#ff0');
+
+//   //v = v + 20;
+//   y = y + 20 ;
+
+//   box.style.top = y;
+
+
+//   requestAnimationFrame(render);
+// }
+
+let x = 100;
+let y = 50; //parseInt(box.style.top);
+// let f = 0;
+let g = 10 / 5000; // м/с
+let v = 0;
+let dy = 0.2;
+let a = 0;
+let dv = 0;
+
+function draw() {
+  v = v + g;
+
+
+  dy = dy + v;
+  if(v > 0) {
+    y += dy;  
+  }
+  else {
+    y -= dy;
+  }
+  
+  
+  console.log(v, dy)
+  if(y > sky.clientHeight) { 
+    v = -v
+    //return
+    
+  }
+
+  box.style.top = y - 1/0.0265;
+  
+}
+
+setInterval(draw, 1000/100);
+
+//render();
+
+
+</script>
+</body>
+</html>
