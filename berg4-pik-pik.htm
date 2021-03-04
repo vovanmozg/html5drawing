@@ -1,0 +1,186 @@
+<html>
+<body>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #bbb;
+}
+</style>
+<canvas id="canvas"></canvas>
+</body>
+<script>
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight;
+var counter = 0;
+
+var keydowned = false;
+
+document.addEventListener('keydown', function(event) {
+  keydowned = true;
+});
+
+
+function Graph() {
+  this.angle = 0;
+  this.prevBarHeight = 300;
+  this.direction = 1;
+  this.bars = new Array();
+  this.counter = 0;
+  this.pik = 0;
+  
+
+  this.createBar = function(_this) {
+    
+    _this.recalcAngle();
+
+
+    //var height = _this.calcNextBar();
+
+
+    var height;
+    if (keydowned) {
+      height = 500;
+      keydowned = false;
+    } else {
+      height = 300;
+    }
+    
+    
+    console.log(height)
+    
+    _this.prevBarHeight = height;
+    _this.bars.push(new Bar(height));  
+  }
+
+
+
+
+  this.calcNextBar = function () {
+    return this.prevBarHeight + this.angle;
+    
+  }
+
+
+  this.recalcAngle = function () {
+    this.angle = this.angle + 1 * this.direction;
+    this.angle = 0;
+
+
+    // if (!keydowned && this.pik) {
+    //   this.angle = -200;
+    //   this.pik = false;
+    // }
+
+    // if (keydowned) {
+    //   this.angle = 200;
+    //   keydowned = false;
+    //   this.pik = true;
+    // }
+
+
+    // if (this.pik == 1) {
+    //   this.angle = -200;
+    //   this.pik = 0;
+    // }
+
+    // this.counter++;   
+    // if(this.counter % 30 == 0) {
+    //   this.angle = 200;
+    //   this.pik = 1;
+    // }
+
+
+    if(Math.random() > 0.9)
+      this.direction *= -1;
+
+    if(this.prevBarHeight < 100) {
+      this.direction = 1;
+      this.angle = this.angle * 0.8;
+    }
+
+    if(this.prevBarHeight > height - 100) {
+      this.direction = -1;
+      this.angle = this.angle * 0.8;
+    }
+      
+  }
+
+
+  setInterval(this.createBar, 100, this);
+
+
+}
+
+
+function Bar(h) {
+  this.h = Math.random() * 300;
+  this.h = Math.sin(counter/100) * 300;
+  this.h = h;
+  this.x = width;
+  this.color = 'rgb(' + parseInt(150) + ', '  + parseInt(150) + ', ' + parseInt(100) + ')';
+  this.hasTree = Math.random() > 0.9;
+
+  this.move = function() {
+    this.x-=2;
+  }
+
+  this.draw = function() {
+    ctx.globalAlpha = 1;
+
+    ctx.fillStyle = '#000000'; 
+    ctx.fillRect(this.x, height, 10, -height);
+
+    ctx.fillStyle = this.color; 
+    ctx.fillRect(this.x, height, 10, -this.h);
+
+//    if(this.hasTree) {
+//
+//      ctx.fillStyle = '#440000';
+//      ctx.fillRect(this.x, height - this.h - 10, 1, 10);
+//
+//      ctx.fillStyle = '#006600';
+//      ctx.fillRect(this.x, height - this.h - 20, 1, 10);
+//    }
+
+
+  }
+}
+
+
+function render() {  
+  for(var i = 0; i < G.bars.length; i++) {
+    G.bars[i].move();
+
+    if(G.bars[i].x <= 0) {
+      var l = G.bars.length;
+      var obj = G.bars[i];
+      G.bars.splice(i, 1);
+      delete obj; 
+    }
+    else {
+      G.bars[i].draw();
+    }
+
+
+  }
+
+  //console.log(G.bars.length);
+
+  requestAnimationFrame(render);
+}
+
+
+
+
+
+G = new Graph();
+render();
+
+
+</script>
+</body>
+</html>
