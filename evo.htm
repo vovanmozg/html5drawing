@@ -1,0 +1,249 @@
+<html>
+<body>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #bbb;
+}
+</style>
+<canvas id="canvas"></canvas>
+<canvas id="canvas2"></canvas>
+</body>
+<script>
+
+var canvas2 = document.getElementById('canvas2');
+var ctx2 = canvas2.getContext('2d');
+canvas2.width = window.innerWidth;
+canvas2.height = window.innerHeight/4;
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight/4*3;
+var counter = 0;
+
+
+
+
+function Graph() {
+  this.particles = new Array();
+
+  this.createWorm = function(x, y) {
+    this.particles.push(new Particle('worm', x, y));  
+  }
+  this.createBird = function(x, y) {
+    this.particles.push(new Particle('bird', x, y));  
+  }
+  this.createCat = function(x, y) {
+    this.particles.push(new Particle('cat', x, y));  
+  }
+
+  this.hitTest = function() {
+    for(var i = 0; i < this.particles.length - 1; i++) {
+      for(var j = 1; j < this.particles.length; j++) {
+        if (i != j) {
+          if (this.particles[i] && this.particles[j]) {
+            var xd = this.particles[i].x - this.particles[j].x;
+            var yd = this.particles[i].y - this.particles[j].y;
+            if(xd > -5 && xd < 5 && yd > -5 && yd < 5) {
+              var to_remove = this.particles[i].hit(this.particles[j]);
+              for(var k = 0; k < to_remove.length; k++) {
+                if(this.particles[i] == to_remove[k])
+                  this.particles.splice(i, 1)
+                
+                if(this.particles[j] == to_remove[k])
+                  this.particles.splice(j, 1)
+                
+                delete to_remove[k];
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for(var i = 0; i < 100; i++) {
+    this.createWorm();
+  }
+
+
+  //setInterval(this.createWorm, 1000, this);
+}
+
+
+
+function Particle(type, x, y) {
+  if (Math.random() > 0)
+    this.type = 'worm'
+  else
+    if (Math.random() > 0.5)
+      this.type = 'bird'
+    else
+      this.type = 'cat'
+  
+  this.type = type;
+
+  this.params = {
+    worm: {
+      color: '#fc2847'
+    },
+    bird: {
+      color: '#0000ff'
+    },
+    cat: {
+      color: '#777777'
+    },
+  }
+   
+  this.size = 5;
+  this.x = x || width * Math.random();
+  this.y = y || height * Math.random();
+  this.color = this.params[this.type]['color']
+  this.direction = 0;
+  this.speed = 2;
+
+  this.move = function() {
+    this.x += this.speed * Math.cos(this.direction);
+    this.y += this.speed * Math.sin(this.direction);
+    this.direction += (-0.5 + Math.random())/10;
+
+    if(this.x > width || this.y > height || this.x < 1 || this.y < 1)
+      this.speed *= -1;
+
+
+  }
+
+  this.follow_to = function(particle) {
+    this.direction = particle.direction;
+    this.speed = this.speed;
+  }
+
+
+  this.draw = function() {
+    ctx.globalAlpha = 1;
+    
+ 
+    ctx.fillStyle = this.color; 
+    // ctx.fillRect(this.x, height, 1, -height);
+
+    //ctx.fillStyle = this.color; 
+    //ctx.fillRect(this.x, this.y, 5, 5);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, 5, 0, 2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+  }
+
+  this.hit = function(particle) {
+    //console.log('hit ' + this.x + ', ' + particle.x);
+    if(this.type == 'worm' && particle.type == 'worm') {
+      G.createBird(this.x, this.y);
+      G.createBird();
+      return new Array(this, particle);
+    }
+    else if(this.type == 'bird' && particle.type == 'worm') {
+      return new Array(particle);
+    }
+    else if(this.type == 'worm' && particle.type == 'bird') {
+      return new Array(this);
+    }
+    else if(this.type == 'bird' && particle.type == 'bird') {
+      G.createCat(this.x, this.y);
+      G.createCat();
+      return new Array(this, particle);
+    }
+    else if(this.type == 'cat' && particle.type == 'worm') {
+
+      G.createWorm();
+      return [this];
+    }
+    else if(this.type == 'worm' && particle.type == 'cat') {
+
+      G.createWorm(); 
+      return [particle];
+    }
+    else if(this.type == 'cat' && particle.type == 'bird') {
+      this.follow_to(particle);
+      return []; //new Array(particle);
+    }
+    else if(this.type == 'bird' && particle.type == 'cat') {
+      particle.follow_to(this);
+      return [] ;//new Array(this);
+    }
+    else if(this.type == 'cat' && particle.type == 'cat') {
+      G.createWorm(this.x, this.y);
+      return new Array(this, particle);
+    }
+
+  }
+}
+
+
+
+function diagram() {
+  // shift everything to the left:
+  var imageData = ctx2.getImageData(1, 0, ctx2.canvas.width-1, ctx2.canvas.height);
+  ctx2.putImageData(imageData, 0, 0);
+  // now clear the right-most pixels:
+  ctx2.clearRect(ctx2.canvas.width-1, 0, 1, ctx2.canvas.height);
+
+  counts = {
+    worm: 0,
+    bird: 0,
+    cat: 0
+  }
+  for(var i=0; i<G.particles.length; i++) {
+    counts[G.particles[i].type]++;
+  }
+
+
+  ctx2.fillStyle = '#333333'; 
+  ctx2.fillRect(canvas2.width - 1, canvas2.height - 100, 1, 1);
+
+  ctx2.fillStyle = '#00ff00'; 
+  ctx2.fillRect(canvas2.width - 1, canvas2.height - G.particles.length, 1, 1);
+
+  ctx2.fillStyle = '#fc2847'; 
+  ctx2.fillRect(canvas2.width - 1, canvas2.height - counts.worm, 1, 1);
+
+  ctx2.fillStyle = '#0000ff'; 
+  ctx2.fillRect(canvas2.width - 1, canvas2.height - counts.bird, 1, 1);
+
+  ctx2.fillStyle = '#777777'; 
+  ctx2.fillRect(canvas2.width - 1, canvas2.height - counts.cat, 1, 1);
+
+  console.log(width);
+}
+
+
+function render() {  
+
+  ctx.clearRect(0, 0, width, height);
+
+  for(var i = 0; i < G.particles.length; i++) {
+    G.particles[i].move();
+    G.particles[i].draw();
+  }
+
+  G.hitTest();
+
+  diagram(); 
+
+  //console.log(G.particles.length);
+  requestAnimationFrame(render);
+}
+
+
+
+
+G = new Graph();
+render();
+
+
+</script>
+</body>
+</html>

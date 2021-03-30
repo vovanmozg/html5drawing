@@ -1,0 +1,9 @@
+{
+  "name": "evo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "snapsvg": "^0.5.1"
+  }
+}

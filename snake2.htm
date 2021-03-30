@@ -1,0 +1,165 @@
+<html>
+<body>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #bbb;
+}
+</style>
+<canvas id="canvas"></canvas>
+<canvas id="canvas2"></canvas>
+</body>
+<script>
+
+var canvas2 = document.getElementById('canvas2');
+var ctx2 = canvas2.getContext('2d');
+canvas2.width = window.innerWidth;
+canvas2.height = 0 * window.innerHeight;
+
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var width = canvas.width = window.innerWidth;
+var height = canvas.height = window.innerHeight/10*10;
+var counter = 0;
+
+
+
+
+function Graph() {
+  this.particles = new Array();
+
+  this.createWorm = function(x, y) {
+    this.particles.push(new Particle('worm', x, y, 4));
+  }
+  this.createBird = function(x, y) {
+    this.particles.push(new Particle('bird', x, y, 0));  
+  }
+  this.createCat = function(x, y) {
+    this.particles.push(new Particle('cat', x, y, 4));
+  }
+
+
+  for(var i = 0; i < 1; i++) {
+    //this.createWorm( width / 2 * Math.random(), height * Math.random());
+    //this.createCat( width / 2 * Math.random(), height * Math.random());
+    this.createWorm(width / 2, height / 2);
+    this.createCat(width / 2, height / 2);
+
+  }
+
+
+  //setInterval(this.createWorm, 1000, this);
+}
+
+
+
+function Particle(type, x, y, speed, target) {
+  if (Math.random() > 0)
+    this.type = 'worm'
+  else
+    if (Math.random() > 0.5)
+      this.type = 'bird'
+    else
+      this.type = 'cat'
+  
+  this.target = target;
+
+  this.type = type;
+
+  this.params = {
+    worm: {
+      color: 'rgb(' + parseInt(Math.random() * 128 + 128) + ',' + parseInt(Math.random() * 128 + 128) + ',' + parseInt(Math.random() * 128 + 128) + ')' //'#fc2847'
+    },
+    bird: {
+      color: '#ff0000'
+    },
+    cat: {
+      color: '#ff7777'
+    },
+  }
+   
+  this.size = 2;
+  //   this.x = width/2;
+  // this.y = height/2;
+  this.x = x || 0; //width * Math.random();
+  this.y = y || 0; //height * Math.random();
+
+  this.color = this.params[this.type]['color']
+  this.direction = Math.random() * 2 * 3.1415;
+  if (typeof speed == 'undefined') {
+    this.speedx = 1;
+    this.speedy = 1;
+  }
+  else {
+    this.speedx = speed;
+    this.speedy = speed;
+  }
+
+
+  this.move = function() {
+    this.x += this.speedx * Math.cos(this.direction);
+    this.y += this.speedy * Math.sin(this.direction);
+
+
+    if(this.target) {
+      var dx = target.x - this.x;
+      var dy = target.y - this.y;
+    }
+    this.direction += (-0.5 + Math.random())/1;
+
+    if(this.x > width - 1 || this.x < 2) {
+      this.speedx *= -1;
+    }
+
+    if(this.y > height - 1 || this.y < 2) {
+      this.speedy *= -1;
+    }
+  }
+
+  // существо будет двигаться в том же направлении, что и другоая частицаы
+  this.follow_to = function(particle) {
+    this.direction = particle.direction;
+    //this.speed = this.speed;
+  }
+
+
+  this.draw = function() {
+    ctx.globalAlpha = 0.3;
+    
+ 
+    ctx.fillStyle = this.color; 
+    // ctx.fillRect(this.x, height, 1, -height);
+
+    //ctx.fillStyle = this.color; 
+    //ctx.fillRect(this.x, this.y, 5, 5);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, 2*Math.PI);
+    ctx.closePath();
+    ctx.fill();
+
+  }
+
+}
+
+
+function render() {
+  //ctx.clearRect(0, 0, width, height);
+
+  for(var i = 0; i < G.particles.length; i++) {
+    G.particles[i].move();
+    G.particles[i].draw();
+  }
+
+  requestAnimationFrame(render);
+}
+
+
+G = new Graph();
+render();
+
+
+</script>
+</body>
+</html>
