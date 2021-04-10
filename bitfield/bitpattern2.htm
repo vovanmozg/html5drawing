@@ -1,0 +1,174 @@
+<body style="background: black; color: gray">
+<div id='box' width="128" height="148" style="margin:10px; float: left; font-size: 8pt">
+  <canvas width="128" height="128"></canvas>
+  <div style="width: 128px; height: 20px; overflow: hidden;">caption</div>
+</div>
+
+<script>
+  function draw(element, comparator) {
+
+    const context = element.getContext('2d');
+    context.fillStyle = '#ccc';
+    
+    
+    for (let x = 0; x < 128; x++) {
+      for (let y = 0; y < 128; y++) {
+        if (comparator(x, y)) {
+          context.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+  }
+
+  onlyDigits = (str) => /^[^xy]+$/.test(str)
+
+  let z = Math.round(Math.random() * 100);
+  
+
+  const bops = ['&', '^', '|', '&', '%', '*', '**', "/", "+", "-", "=="];
+  const uops = ['~'];
+
+  cbops = (a, b, level) => {
+
+    if (a == 'x' && Math.random() > 0.5) {
+      console.log(1, a, b, level);
+      //a = cbops(a, Math.floor(Math.random() * 128), level + 1);
+      a = Math.floor(Math.random() * 128);
+    }
+
+    if (b == 'y' && Math.random() > 0.5) {
+      console.log(2, a, b, level);
+      // b = cbops(b, Math.floor(Math.random() * 128), level + 1);
+      b = Math.floor(Math.random() * 128);
+    }
+
+   
+    if (level == 1) {
+      if (/^[^xy]+$/.test(a) && /^[^xy]+$/.test(b)) {
+        console.log(3, a, b, level);
+        result = cbops(a, b, level + 1);
+      }
+    }
+
+
+    const expression1 = a + bops[Math.floor(Math.random() * bops.length)] + b;
+    if (Math.random() > 0.5) {
+      result = expression1;
+    } else {
+        const expression2 = a + bops[Math.floor(Math.random() * bops.length)] + b;
+        console.log(4, a, b, level);
+        result = cbops("(" + expression1 + ")", "(" + expression2 + ")", level + 1);
+    }
+
+    
+    //debugger
+
+    if (level == 1) {
+      if (
+           /^x-1$/.test(result) ||
+           /^x-y$/.test(result) ||
+           /^x\|\d+$/.test(result) ||
+           /^[^xy]+$/.test(result)
+           // /^x==y$/.test(result)
+         ) {
+            console.log(5, a, b);
+            result = cbops(a, b, level + 1);
+      } 
+    } 
+
+  
+    return result;
+  }
+
+  comparators2 = []
+  Array.from(Array(30)).forEach((_, j) => {
+    comparators2.push(eval("(x, y) => " + cbops('x', 'y', 1)));
+  });
+
+
+  comparators = [
+    (x, y) => (x & y) % 6 == (x ^ y) % 9,
+    (x, y) => (x & y) % 2 == (x ^ y) % 6,
+    (x, y) => 100 % (x&y) == 100 % (-x&y),
+    (x, y) => 100 % (x&y) == 100 % (x&-y),
+    (x, y) => 100 % (-x&-y) == 100 % (-x&y),
+    (x, y) => 100 % (-x&-y) == 100 % (x&-y),
+    (x, y) => 100 % (-x&y) == 100 % (x&-y),
+
+    (x, y) => 100 % (x&y) + 100 % (-x&y),
+    (x, y) => (y % x) % 20,
+    (x, y) => 40 % (x % y),
+    (x, y) => ((x ^ y) & 32) * (x ^ y) % 9,
+    (x, y) => (x / y) % 1,
+    (x, y) => x & y,
+    (x, y) => x % y,
+    (x, y) => x & 9,
+    (x, y) => (x^y) % 5,
+    (x, y) => ((x * y) ** 4) % 7,
+    (x, y) => ((x * y) ** 5) % 99,
+    (x, y) => ((x * y) ** 9) % 3,
+    (x, y) => (x ^ y) & 32,
+    (x, y) => (x ^ y) & 72,
+    (x, y) => (x ^ y) & 23,
+    (x, y) => (x & y) & (x ^ y) % 19,
+    (x, y) => (x * 64) % y * ((x ^ y) < 77),
+    (x, y) => (x % y) % 4,
+    (x, y) => (x ^ y) % 9,
+    (x, y) => (x | y) < 200,
+
+    // изучить:
+    (x, y) => ((x*y)-(x&y))&65
+  ];
+
+  //comparators = []
+
+  Array.from(Array(20)).forEach((_, i) => {
+    Array.from(Array(20)).forEach((_, j) => {
+      //comparators.push((x, y) => (x & y) % i == (x ^ y) % j);
+      comparators.push(eval("(x, y) => (x & y) % " + i + " == (x ^ y) % " + j));
+    });
+  });
+
+  // Array.from(Array(20)).forEach((_, i) => {
+  //   comparators.push(eval("(x, y) => (x ^ y) & " + i));
+  // });
+
+  
+
+  // for(i = 0; i < 20; i++) {
+  //   for(j = 0; j < 20; j++) {
+  //     //comparators.push(eval("(x, y) => (x & y) % " + i + " == (x ^ y) % " + j));
+  //     //(() => {
+  //       const i2 = i;
+  //       const j2 = j;
+  //       comparators.push((x, y) => (x & y) % i2 == (x ^ y) % j2);
+  //     //})();
+  //   }  
+  // }
+
+  comparators.concat([
+
+  ])
+
+  
+  comparators2
+  .reverse()
+  .slice(0, 20)
+  .forEach(comparator => {
+    
+    newBox = box.cloneNode(1)
+    newBox.removeAttribute('id')
+    box.parentNode.appendChild(newBox)
+    
+    draw(newBox.children[0], comparator)
+    newBox.children[1].textContent = comparator
+  })
+
+  box.style.display = "none";
+
+
+
+
+
+</script>
+</body>

@@ -1,0 +1,57 @@
+<canvas id="c" width="1024" height="1024" style="border:1px solid gray">
+<script>
+  const context = c.getContext('2d');
+  // for (let x = 0; x < 256; x++) {
+  //   for (let y = 0; y < 256; y++) {
+  //     if ((x ^ y) % 3) {
+  //       context.fillRect(x*4, y*4, 4, 4);
+  //     }
+  //   }
+  // }
+
+  console.log(Date())
+
+  scale = 2
+  
+  circleRadius = 1
+  rStep = 6
+  for (let r = 0; r < 1024/scale; r += rStep) {
+
+  	//c = Math.PI * 2 * r;
+
+  	
+  	//lStep = rStep / r;
+  	// Количество точек, помещающихся на этом уровне
+  	count = Math.floor(Math.PI * 2 * r / rStep)
+  	
+  	i = 0
+    for (let l = 0; l < Math.PI * 2; l += Math.PI * 2 / count) {
+    
+      x = i
+      y = r
+    	
+      //if ((x & y)   &   (x ^ y) % 19) {
+      if ( ((x%5 * y) ** 4) % 7) {
+      	
+
+		x = 1024 / 2 + r * Math.cos(l)
+		y = 1024 / 2 + r * Math.sin(l)
+
+		x = Math.round(x)
+		y = Math.round(y)
+
+        context.fillRect(x, y, 4, 4);
+        //console.log(l, r, x, y, lStep)
+        //context.beginPath();
+        //context.arc(x, y, circleRadius, 0, 2 * Math.PI);
+        //context.stroke();
+      }
+      i ++;
+      //debugger
+    }
+    //console.log(i)
+  }
+
+
+
+</script>
