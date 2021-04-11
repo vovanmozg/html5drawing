@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>* {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        outline: 0;
+        overflow: hidden
+    }
+
+    canvas {
+        width: 100%;
+        background: white;
+    }</style>
+</head>
+<body>
+<canvas id="c" width="2000" height="1080" style=""></canvas>
+<script>var c = document.querySelector("#c");
+c.width = 1920;
+c.height = 1080;
+var S = Math.sin;
+var C = Math.cos;
+var T = Math.tan;
+// var R = function (r, g, b, a) {
+//   a = a === undefined ? 1 : a;
+//   return "rgba(" + (r | 0) + "," + (g | 0) + "," + (b | 0) + "," + a + ")";
+// };
+var x = c.getContext("2d");
+var startT = +new Date();
+
+
+
+
+function u(t) {
+  c.width |= 0
+
+  for (i=0;i<64;i++){
+    for (j=0;j<64;j++) {
+      if (1&t*2+7-i*35/8) {
+        x.fillStyle=`hsl(${255-i},99%,${i}%)`
+        x.fillRect(j*8+704,i*8+184,8,8);
+      }
+    }
+  }
+}
+
+function u3(t) {
+  c.width |= 0
+
+  for (i=0;i<64;i++){
+    for (j=0;j<64;j++) {
+      if ((i * S(t*2)*10 > j * C(t))) {
+
+        x.fillRect(i*8+704,j*8+184,8,8);
+
+      }
+    }
+  }
+}
+
+function u2(t) {
+  c.width |= 0
+
+
+
+  for (let i = 0; i < 128; i++) {
+    for (let j = 0; j < 128; j++) {
+      if ((i * j) & t * 10) {
+        x.fillRect(i*4, j*4, 4, 4);
+      }
+    }
+  }
+  x.fillStyle=`hsl(${1/3},99%,${25*S(t+1/99)+30}%)`
+  //x.drawImage(c,-8,-8,1936,1096)
+
+  return
+
+  for(i=960;i--;x.fillRect(i%480*4,550-i/48,4,9*S(t+i/9)))x.fillStyle=`hsl(${i/3},99%,${25*S(t+i/99)+30}%)`
+  x.drawImage(c,-8,-8,1936,1096)
+  return
+
+
+  // пирамидка
+  f = (X, Y, Z, d, o = d < 7 && 5) => {
+    s = 3 / Z / Z;
+    rectX = 960 + 1e3 * X / Z;
+    rectY = 1000 * Y / Z;
+    rectW = s;
+    rectH = s;
+    x.fillRect(rectX, rectY, rectW, rectH);
+
+    for (0; o--; 0) {
+
+      R = o && 2 ** -d;
+      a = t + 11 * o;
+      XNew = X + R * S(a);
+      YNew = Y + R;
+      ZNew = Z + R * C(a);
+      dNew = d + 1;
+      f(XNew, YNew, ZNew, dNew);
+    }
+  };
+
+  c.width |= f;
+
+  f(0, 0, 1, 2)
+};
+
+function loop() {
+  requestAnimationFrame(loop);
+  u((new Date() - startT) / 1000);
+};loop();</script>
+</body>
+</html>
