@@ -1,0 +1,125 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+(a === undefined ? 1 : a)+")"
+	
+x = c.getContext("2d");
+// https://www.dwitter.net/u/pavel
+
+
+function u(t) {
+	with(x)for(i=999;i--;fillRect(~setTransform(s=24e3/i,0,0,4*s,960-i+9*s*C(a=i+60*t),540+8*s*S(a)),~rotate(T(a*a)),2,2))fillStyle=R(9,i/4,i/3)
+	
+}
+function u5(t) {
+
+	for(i=-6*t%5;i++<60;)
+	{
+		x.fillStyle=R(2*i,2*i,2*i)
+		x.beginPath()
+		for(j=70;--j;) {
+			h=200
+			hShift = 800 //h * S(3 * t) ** 2 / i
+			x.arc(
+				960,
+				h + hShift,
+				//h/i*(20+4*S(~~i+(6*t)^j)),
+				h/i*50+10*S(i/2),
+				b=j/9,
+				b
+			)
+
+
+
+		}
+		x.fill()
+	}
+	
+
+}
+
+
+function u4(t) {
+
+	for(i=-6*t%1;i++<60;)
+	{
+		x.fillStyle=R(16*i,i*4)
+		x.beginPath()
+		for(j=70;--j;) {
+			h=200
+			hShift = 800 //h * S(3 * t) ** 2 / i
+			x.arc(
+				960,
+				h + hShift,
+				//h/i*(20+4*S(~~i+(6*t)^j)),
+				h/i*50+10*S(i/2),
+				b=j/9,
+				b
+			)
+
+
+
+		}
+		x.fill()
+	}
+	
+
+}
+
+
+function u2(t) {
+	for(i=-5*t%1;i++<60;)
+	{
+		x.fillStyle=R(8*i,4*i)
+		x.beginPath()
+		for(j=70;--j;) {
+			h=200
+			hShift = h * S(3 * t) ** 2 / i
+			x.arc(
+				960,
+				h + hShift,
+				//h/i*(20+4*S(~~i+(6*t)^j)),
+				h/i*50+10*S(i)^i,
+				b=j/9,
+				b
+			)
+
+
+
+		}
+		x.fill()
+	}
+};
+
+
+
+function u3(t) {
+
+	for(i=-6*t%1;i++<60;)
+	{
+		x.fillStyle=R(255-16*i,255-i*4)
+		x.beginPath()
+		for(j=70;--j;) {
+			h=200
+			hShift = 0 //h * S(3 * t) ** 2 / i
+			x.arc(
+				960,
+				h + hShift,
+				h/i*(9+4*S(~~i+(6*t)^j)),
+				//h/i*50,
+				b=j/9,
+				b
+			)
+
+
+
+		}
+		x.fill()
+	}
+	
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+
+</script>

@@ -1,0 +1,53 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+(a === undefined ? 1 : a)+")"
+	
+x = c.getContext("2d");
+// https://www.dwitter.net/d/3352
+
+
+function u(t) {
+
+t ? c.width|=0 : M=[...Array(260)]
+
+
+
+mapper = (e,i)=> {
+
+	n=1
+	w=20
+	p1 = [1,19,20,21].map(e=>n+=M[i+e]+M[i-e]);
+	p2 = 4-n;
+
+
+	if (p2 == 0 || (p2 == e)) {
+		x.fillRect(i%w*w, i-i%w, 19, 19)
+		return true
+	} else {
+		x.strokeRect(i%w*w, i-i%w, w, w)
+		
+		if(t) {
+			return false				
+		} 
+
+		return 18 < i % w
+		
+	}
+	
+
+	//return [1,e][p1,p2]?!x.fillRect(i%w*w,i-i%w,w,w):!t&&18<i%w
+}
+
+
+M = M.map(mapper)
+
+
+}
+
+
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+//window.onkeyup = (e) => 	{u((new Date()-startT)/1000)} 
+
+</script>

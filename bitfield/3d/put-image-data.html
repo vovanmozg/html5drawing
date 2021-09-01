@@ -1,0 +1,39 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+a===undefined?1:a+")"
+x = c.getContext("2d");
+function u(t) {
+  /* Draw scaled pixels with putImageData*/
+
+  //c.width |= 0
+
+  s = 256 // size in pixels
+  m = 16 // megaPixel size
+  b = 4 //bites in pixel
+
+  I = x.createImageData(s, s)
+
+  for(Y=0; Y<s/m; Y++) {
+    for(X=0; X<s/m; X++) {
+      for(DY=0; DY<m * b*s; DY+=s*b) {
+        for(DX=0; DX<m * b; DX+=b) {
+          j = DX + DY + Y * s * b * m + X * b * m;
+
+          I.data[j + 0] = ((X+Y)%2) ? 200 : 100;        // R value
+          I.data[j + 1] = ((X+Y)%2) ? 100 : 0;        // G value
+          I.data[j + 2] = 0;  // B value
+          I.data[j + 3] = 255;      // A value
+        }
+      }
+    }
+  }
+
+
+  x.putImageData(I, 20, 20);
+
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+</script>

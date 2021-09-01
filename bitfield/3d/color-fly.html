@@ -1,0 +1,16 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+a===undefined?1:a+")"
+x = c.getContext("2d");
+function u(t) {
+
+
+  for(i=960;i--;x.fillRect(i%480*4,550-i/48,4,9*S(t+i/9)))x.fillStyle=`hsl(${i/3},99%,${25*S(t+i/99)+30}%)`
+  x.drawImage(c,-8,-8,1936,1096)
+
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+</script>

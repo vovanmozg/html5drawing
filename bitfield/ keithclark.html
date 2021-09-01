@@ -1,0 +1,68 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+(a === undefined ? 1 : a)+")"
+	
+x = c.getContext("2d");
+// https://www.dwitter.net/u/pavel
+
+
+function u(t) {
+
+c.width=2e3;
+for(k=i=1e3;z=--i/9;) {j=i/k+t/20,x.fillStyle=R(r=1e4/z,r,r);x.fillRect(k+S(m=k*j^k)*r-z*C(j)*5,540+C(m)*r-z*S(j)*3,W=99/z,W)}
+
+}
+
+function u2(t) {
+
+//x.beginPath();       // Начинает новый путь
+//x.moveTo(30, 50);
+
+
+(a=(r)=>x.fillStyle=R(r,r,r))(0);
+x.fillRect(0,0,2e3,2e3)
+for(k=i=500;z=--i/9;) {
+speed=i/k+t/20,
+r=10000/z,
+a(r)
+X = k+S(m=k*speed^k)*r-z*C(speed)*5
+Y = 540+C(m)*r-z*S(speed)*3
+W = s = 100/z
+x.fillRect(X,Y,W,s)
+//x.lineTo(X,Y)
+//x.stroke();
+}
+
+	return
+
+//	c.width|=0
+	k=1000
+	x.fillStyle=R(0);
+	x.fillRect(0,0,2e3,2e3)
+	
+
+	
+	for(i=1000;z=--i/9;) {
+		j=i/k+t/4,
+		r=~~(t%50)
+		r=30
+		r=10000/z,
+		x.fillStyle=R(r,r,r);
+		X = k+S(m=k*j^k)*r-z*C(j)*5
+		Y = 540+C(m)*r-z*S(j)*3
+		W = s = 200/z
+		x.fillRect(X,Y,W,s)
+		// x.beginPath();
+		// x.arc(X,Y,W,0,6.28)
+		// x.fill()
+	}
+
+	
+}
+
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+//window.onkeyup = (e) => 	{u((new Date()-startT)/1000)} 
+
+</script>

@@ -1,0 +1,22 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+a===undefined?1:a+")"
+x = c.getContext("2d");
+function u(t) {
+
+  c.width |= 0
+
+  for (i=0;i<64;i++){
+    for (j=0;j<64;j++) {
+      if (1&t*2+7-i*35/8) {
+        x.fillStyle=`hsl(${255-i},99%,${i}%)`
+        x.fillRect(j*8+704,i*8+184,8,8);
+      }
+    }
+  }
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+</script>

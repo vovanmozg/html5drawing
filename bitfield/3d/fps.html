@@ -1,0 +1,46 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+a===undefined?1:a+")"
+x = c.getContext("2d");
+var lastLoop = new Date();
+function u(t) {
+
+  var thisLoop = new Date();
+  var fps = 1000 / (thisLoop - lastLoop);
+  lastLoop = thisLoop;
+
+  c.width |= 0
+
+  imageData = x.createImageData(512, 512);
+  for (i=0;i<256;i++){
+    for (j=0;j<256;j++) {
+      if ((i ^ j) % (Math.ceil(t*1)%10)) {
+
+        n = (j * 256  + i ) * 4
+
+        for(k=0; k<1; k++) {
+          imageData.data[n + k + 0] = 0;
+          imageData.data[n + k +1] = 0;
+          imageData.data[n + k +2] = 0;
+          imageData.data[n + k +3] = 255;
+        }
+        // imageData.data[n + 0] = 0;
+        // imageData.data[n + 1] = 0;
+        // imageData.data[n + 2] = 0;
+        // imageData.data[n + 3] = 255;
+        //x.fillRect(i*8+704,j*8+184,8,8);
+
+      }
+    }
+  }
+
+  //desc.innerHTML = fps
+
+  x.putImageData(imageData, 0, 0);
+  //x.setTransform(1, 0, 0, 1, 0, 0);
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+</script>

@@ -1,0 +1,22 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+(a === undefined ? 1 : a)+")"
+	
+x = c.getContext("2d");
+// https://www.dwitter.net/u/pavel
+
+
+function u(t) {
+	t<.1&&(d=a=256,s=15467,l={})
+x.fillStyle=R(...l[s]?[s,s,s]:"")
+x.fillRect((s&255)*9,(s>>8)*9,9,9)
+d+=(l[s]=!l[s])?1:-1
+s+=[-a,1,a,-1][d%4]
+	
+}
+
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+
+</script>

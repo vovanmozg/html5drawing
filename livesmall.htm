@@ -1,0 +1,14 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+t=Math.random,x=c.getContext('2d');
+(loop=()=>{requestAnimationFrame(loop);
+(B=b=>x.fillStyle=`rgb(${b},${b},${b})`)(1)
+d=196,e=4096
+for(i=30;i--;x.fillRect(d+t()*d,d+t()*d,8,8))
+m=[]
+for(i=e;i--;m[Y][X=i%64]=x.getImageData(X*8,Y*8,1,1).data[0]==1)m[Y=i>>6]||=[]
+for(i=e;i--;x.fillRect(Y*8,X*8,8,8))
+w=(X=i%64)?X-1:63,e=X?X<63?X+1:0:X+1,n=(Y=i>>6)?Y-1:63,s=Y?Y<63?Y+1:0:Y+1,
+N=m[w][n]+m[X][n]+m[e][n]+m[w][Y]+m[e][Y]+m[w][s]+m[X][s]+m[e][s],
+B(m[X][Y]&&!(N<2||N>3)||!m[X][Y]&&N==3?1:255)
+})()
+</script>

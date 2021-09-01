@@ -1,0 +1,33 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+a===undefined?1:a+")"
+x = c.getContext("2d");
+// https://www.dwitter.net/u/pavel
+function u(t) {
+	c.width = 1900;
+	cellSize = 32;
+	q = t % 1 * cellSize; // from 0 to 32
+	
+	q2 = q >> 3 // Math.floor(q / 8)
+	num = [810,865,1858,9808][q2]
+
+	for(i = 1640; i--;) {
+		X = i % cellSize
+		a = X > 7
+		b = X < 12
+		
+		i2 = i/8
+		num2 = i2+X+6
+		num3 = num>>num2
+		method = a&b&num3?'fillRect':'strokeRect'
+		posLeft = X*cellSize-q
+		posTop = (i&-cellSize)-q
+		x[method](posLeft,posTop,32,32)
+	}
+  	
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+</script>

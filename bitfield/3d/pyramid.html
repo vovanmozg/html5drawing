@@ -1,0 +1,37 @@
+<canvas id=c width=2000 height=1080 style=width:100%></canvas><script>
+c.width=1920,c.height=1080
+S=Math.sin,C=Math.cos,T=Math.tan
+R=(r,g,b,a)=>"rgba("+(r|0)+","+(g|0)+","+(b|0)+","+a===undefined?1:a+")"
+x = c.getContext("2d");
+function u(t) {
+
+
+f = (X, Y, Z, d, o = d < 7 && 5) => {
+    s = 3 / Z / Z;
+    rectX = 960 + 1e3 * X / Z;
+    rectY = 1000 * Y / Z;
+    rectW = s;
+    rectH = s;
+    x.fillRect(rectX, rectY, rectW, rectH);
+
+    for (0; o--; 0) {
+
+      R = o && 2 ** -d;
+      a = t + 11 * o;
+      XNew = X + R * S(a);
+      YNew = Y + R;
+      ZNew = Z + R * C(a);
+      dNew = d + 1;
+      f(XNew, YNew, ZNew, dNew);
+    }
+  };
+
+  c.width |= f;
+
+  f(0, 0, 1, 2)
+
+
+};
+startT = +new Date();
+(loop=()=>requestAnimationFrame(loop)&&u((new Date()-startT)/1000))();
+</script>
