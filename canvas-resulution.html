@@ -1,0 +1,46 @@
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #ccc;
+            color: #bbb;
+        }
+        xcnv {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+        }
+    </style>
+    <script>
+        function run() {
+          const canvas = document.getElementById('cnv');
+          //canvas.style.width = WIDTH * 10;
+          //canvas.style.height = HEIGHT * 10;
+          const ctx = canvas.getContext('2d');
+          //this.ctx.imageSmoothingEnabled = false;
+
+          const imageData = ctx.createImageData(100, 100);
+
+          for (let x = 0; x < 100; x+=2) {
+            for (let y = 0; y < 100; y+=2) {
+              imageData.data[((y * (imageData.width * 4)) + (x * 4)) + 0] = 0;
+              imageData.data[((y * (imageData.width * 4)) + (x * 4)) + 1] = 0;
+              imageData.data[((y * (imageData.width * 4)) + (x * 4)) + 2] = 0;
+              imageData.data[((y * (imageData.width * 4)) + (x * 4)) + 3] = 255;
+            }
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+
+        }
+    </script>
+</head>
+
+<body onload="run();">
+
+<canvas id="cnv"></canvas>
+
+</body>
+</html>
