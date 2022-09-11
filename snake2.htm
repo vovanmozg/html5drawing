@@ -25,7 +25,19 @@ var height = canvas.height = window.innerHeight/10*10;
 var counter = 0;
 
 
+var ANGLE = 0;
 
+
+function init() {
+  document.body.addEventListener("keydown", function(evt) {
+      if(evt.keyCode == 37)
+        ANGLE+=0.01;
+      if(evt.keyCode == 39)
+        ANGLE-=0.01;
+      if(evt.keyCode == 32)
+        _this.shot();
+    }, false);
+}
 
 function Graph() {
   this.particles = new Array();
@@ -41,11 +53,11 @@ function Graph() {
   }
 
 
-  for(var i = 0; i < 1; i++) {
+  for(var i = 0; i < 2; i++) {
     //this.createWorm( width / 2 * Math.random(), height * Math.random());
     //this.createCat( width / 2 * Math.random(), height * Math.random());
     this.createWorm(width / 2, height / 2);
-    this.createCat(width / 2, height / 2);
+    //this.createCat(width / 2, height / 2);
 
   }
 
@@ -107,7 +119,9 @@ function Particle(type, x, y, speed, target) {
       var dx = target.x - this.x;
       var dy = target.y - this.y;
     }
-    this.direction += (-0.5 + Math.random())/1;
+    
+    //this.direction += (-0.5 + Math.random())/1;
+    this.direction += ANGLE;
 
     if(this.x > width - 1 || this.x < 2) {
       this.speedx *= -1;
@@ -126,7 +140,7 @@ function Particle(type, x, y, speed, target) {
 
 
   this.draw = function() {
-    ctx.globalAlpha = 0.3;
+    ctx.globalAlpha = 0.9;
     
  
     ctx.fillStyle = this.color; 
@@ -157,6 +171,7 @@ function render() {
 
 
 G = new Graph();
+init();
 render();
 
 
