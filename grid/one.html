@@ -1,0 +1,50 @@
+<html>
+<head>
+
+    <style>
+      html, body {
+        width:  100%;
+        height: 100%;
+        margin: 0;
+      }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            color: #333;
+            font-family: Arial;
+            font-size: 12px;
+        }
+        canvas {
+            background: #ffd;
+            background: #000;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+    </style>
+    
+    <script src="./grid.js" ></script>
+    <script src="./matrix.js"></script>
+    <!-- <script src="./gamerKeys.js"></script> -->
+    <script src="./gamerOneRandomMove.js"></script>
+
+    <script>
+      // COMMON
+
+      function run() {
+        const matrix = new Matrix(100, 100);
+        grid = new Grid(matrix);
+
+        var gamer = new Gamer(matrix, 20, 50, {r:220, g:220, b: 220});
+        gamer.step(grid);
+
+      }
+    </script>
+</head>
+<body onload="run()">
+<canvas id="cnv"></canvas>
+</body>
+</html>
+

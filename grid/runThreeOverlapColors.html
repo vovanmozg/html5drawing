@@ -1,0 +1,33 @@
+<html>
+<head>
+    
+    <script src="./grid.js" ></script>
+    <script src="./matrix.js"></script>
+    <!-- <script src="./gamerKeys.js"></script> -->
+    <script src="./gamerThreeOverlapColors.js"></script>
+
+    <script>
+      // COMMON
+
+      function run() {
+        const matrix = new Matrix(31, 21);
+        grid = new Grid(matrix);
+
+        var gamer = new Gamer(matrix, 10, 10, {r:20, g:0, b: 0});
+        gamer.step(grid);
+        
+
+        var gamer2 = new Gamer(matrix, 15, 10, {r:0, g:20, b: 0});
+        gamer2.step(grid);
+
+        var gamer3 = new Gamer(matrix, 20, 10, {r:0, g:0, b: 20});
+        gamer3.step(grid)
+
+      }
+    </script>
+</head>
+<body onload="run()">
+<canvas id="cnv"></canvas>
+</body>
+</html>
+

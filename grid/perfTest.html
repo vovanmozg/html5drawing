@@ -1,0 +1,59 @@
+<html>
+<head>
+
+    
+    <script src="./grid.js" ></script>
+
+    <script>
+      // COMMON
+
+
+      function run() {
+
+        const canvas = document.getElementById('cnv');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = 1000;
+        canvas.height = 1000;
+
+        const imageData = ctx.createImageData(1000, 1000);
+
+        //const markerNameA = "example-marker-a"
+        //performance.mark(marker);
+        for(let i = 0; i < 10; i++) {
+          console.time('ku1');
+          for(let j = 0; j < 100; j++) {
+            imageData.data.fill(i);
+          }
+          console.timeEnd('ku1');
+
+          console.time('ku2');
+          for(let j = 0; j < 100; j++) {
+            for (let k = 0; k < 1000000; k += 4) {
+              imageData.data[k + 0] = 1;
+              imageData.data[k + 1] = 2;
+              imageData.data[k + 2] = 3;
+              imageData.data[k + 3] = 255;
+            }
+          }
+          console.timeEnd('ku2');
+
+          console.time('ku3');
+          for(let j = 0; j < 100; j++) {
+            for (let k = 0; k < 1000000; k += 4) {
+              imageData.data.set([1, 2, 3, 255], k)
+            }
+          }
+          console.timeEnd('ku3');
+        }
+        
+        //performance.measure("measure a to now", markerNameA);
+
+      }
+    </script>
+</head>
+<body onload="run()">
+<canvas id="cnv"></canvas>
+</body>
+</html>
+
