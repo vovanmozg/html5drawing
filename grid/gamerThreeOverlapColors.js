@@ -23,35 +23,35 @@ function Gamer(matrix, x, y, drawColor) {
 
   this.isEqual = function isEqual(o1, o2) {
     return o1.r === o2.r && o1.g === o2.g && o1.b === o2.b;
-  }
+  };
 
-  this.move = function(h = 0, v = 0) {
-  
+  this.move = function move(h = 0, v = 0) {
     // Check boundaries
     const newX = this.x + h;
     const newY = this.y + v;
-    
-    if (matrix.cells[newX] === undefined) return;
-    if (matrix.cells[newX][newY] === undefined) return;
-    
-    
-    const currentColor = matrix.cells[this.x][this.y];
-    currentColor.r = currentColor.r === undefined ? this.drawColor.r : currentColor.r + this.drawColor.r;
-    currentColor.g = currentColor.g === undefined ? this.drawColor.g : currentColor.g + this.drawColor.g;
-    currentColor.b = currentColor.b === undefined ? this.drawColor.b : currentColor.b + this.drawColor.b;
+
+    if (this.matrix.cells[newX] === undefined) return;
+    if (this.matrix.cells[newX][newY] === undefined) return;
+
+    const currentColor = this.matrix.cells[this.x][this.y];
+    if (currentColor.r !== undefined && currentColor.g !== undefined
+      && currentColor.b !== undefined) {
+      currentColor.r += this.drawColor.r;
+      currentColor.g += this.drawColor.g;
+      currentColor.b += this.drawColor.b;
+    }
 
     currentColor.r = currentColor.r > 255 ? 255 : currentColor.r;
     currentColor.g = currentColor.g > 255 ? 255 : currentColor.g;
     currentColor.b = currentColor.b > 255 ? 255 : currentColor.b;
 
     // Previous cell should be filled by gray
-    matrix.cells[this.x][this.y] = currentColor;
-    
-    
+    this.matrix.cells[this.x][this.y] = currentColor;
+
     this.x = newX;
     this.y = newY;
 
     //
-    //matrix.cells[this.x][this.y] = {r:50, g:50, b: 50};
-  }
-}      
+    // matrix.cells[this.x][this.y] = {r:50, g:50, b: 50};
+  };
+}
