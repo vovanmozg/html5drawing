@@ -1,0 +1,24 @@
+<html>
+<head>
+    
+    <script src="../grid.js" ></script>
+    <script src="../matrix.js"></script>
+    <script src="./circlesGrid.js"></script>
+
+    <script>
+      // COMMON
+
+      function run() {
+        const matrix = new Matrix(170, 90);
+        grid = new Grid(matrix);
+
+        var gamer = new Gamer(matrix);
+        gamer.step(grid);
+      }
+    </script>
+</head>
+<body onload="run()">
+<canvas id="cnv"></canvas>
+</body>
+</html>
+
