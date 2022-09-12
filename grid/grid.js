@@ -26,7 +26,7 @@ function Grid(matrix, options = {}) {
     this.cellWidth = options.cellSize; // pixels
     this.cellHeight = options.cellSize; // pixels
   } else {
-
+    // TODO: Make cell-size-based generation
   }
 
   document.body.style.backgroundColor = `rgb(${this.options.backgroundColor.join(',')})`;
@@ -61,17 +61,17 @@ Grid.prototype.recalcGeometry = function () {
   this.ctx.canvas.style.top = (window.innerHeight - this.ctx.canvas.height) / 2;
 };
 
-Grid.prototype.redraw = function () {
+Grid.prototype.redraw = function (writeRect) {
   if (this.ctx === undefined) return;
 
   const imageData = this.ctx.createImageData(
     this.columns * this.cellWidth + this.options.gridThickness,
     this.rows * this.cellHeight + this.options.gridThickness,
   );
-  this.fillDefault(imageData);
+  // this.fillDefault(imageData);
 
-  for (i = 0; i < this.matrix.cells.length; i++) {
-    for (j = 0; j < this.matrix.cells[i].length; j++) {
+  for (let i = 0; i < this.matrix.cells.length; i++) {
+    for (let j = 0; j < this.matrix.cells[i].length; j++) {
       const cell = this.matrix.cells[i][j];
       if (cell.r === undefined) {
         cell.r = this.options.backgroundColor[0];
@@ -80,7 +80,7 @@ Grid.prototype.redraw = function () {
       } else {
 
       }
-      this.drawItem(i, j, cell, imageData);
+      this.drawItem(i, j, cell, imageData, writeRect);
       // {r: 100, g: 100, b: 255*Math.random()}
     }
   }
@@ -88,26 +88,32 @@ Grid.prototype.redraw = function () {
 };
 
 // itemX, itemY  - scaled item x, y. If width = 200 and CELL_SIZE = 10, then 0 <= x,y < 20
-Grid.prototype.drawItem = function (itemX, itemY, color, imageData) {
+Grid.prototype.drawItem = function (itemX, itemY, color, imageData, writeRect) {
   const x = itemX * this.cellWidth;
   const y = itemY * this.cellHeight;
 
-  let mainBodyLeftX; let mainBodyRightX; let mainBodyTopY; let
-    mainBodyBottomY;
+  const lX = x + this.options.gridThickness;
+  const rX = x + this.cellWidth - 1;
+  const tY = y + this.options.gridThickness;
+  const bY = y + this.cellHeight - 1;
 
-  mainBodyLeftX = x + this.options.gridThickness;
-  mainBodyRightX = x + this.cellWidth - 1;
-  mainBodyTopY = y + this.options.gridThickness;
-  mainBodyBottomY = y + this.cellHeight - 1;
+  function writer(lt, rx, ty, by, newColor) {
+    this.writeRectangle(lt, rx, ty, by, newColor, imageData);
+  }
+  if (writeRect) {
+    // const { writeRectangle } = this;
+    writeRect(lX, rX, tY, bY, color, writer.bind(this));
+  } else {
+    this.writeRectangle(lX, rX, tY, bY, color, imageData);
+  }
+};
 
-  this.writeRectangle(
-    mainBodyLeftX,
-    mainBodyRightX,
-    mainBodyTopY,
-    mainBodyBottomY,
-    color,
-    imageData,
-  );
+Grid.prototype.writeRectangle = function (lX, rX, tY, bY, color, imageData) {
+  for (let x = lX; x <= rX; x += 1) {
+    for (let y = tY; y <= bY; y += 1) {
+      this.writeImageDataPixel(x, y, color, imageData);
+    }
+  }
 };
 
 Grid.prototype.writeImageDataPixel = function (x, y, color, imageData) {
@@ -119,14 +125,6 @@ Grid.prototype.writeImageDataPixel = function (x, y, color, imageData) {
   imageData.data[index] = color.b;
   index += 1;
   imageData.data[index] = color.a === undefined ? 255 : color.a;
-};
-
-Grid.prototype.writeRectangle = function (mainBodyLeftX, mainBodyRightX, mainBodyTopY, mainBodyBottomY, color, imageData) {
-  for (let x = mainBodyLeftX; x <= mainBodyRightX; x += 1) {
-    for (let y = mainBodyTopY; y <= mainBodyBottomY; y += 1) {
-      this.writeImageDataPixel(x, y, color, imageData);
-    }
-  }
 };
 
 Grid.prototype.fillDefault = function (imageData) {
