@@ -11,5 +11,6 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'prefer-destructuring': ['error', { object: false, array: false }],
   },
 };

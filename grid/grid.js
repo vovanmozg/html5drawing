@@ -13,6 +13,7 @@ function Grid(matrix, options = {}) {
     backgroundColor: [0, 0, 0], // white
     gridColor: [50, 50, 50], // gray
     gridThickness: 1,
+    stretch: true, // scale cells with windows size
   };
 
   // Merge default options with passed options
@@ -23,6 +24,7 @@ function Grid(matrix, options = {}) {
   this.rows = this.matrix.rows;
 
   if (options.cellSize) {
+    this.options.stretch = false;
     this.cellWidth = options.cellSize; // pixels
     this.cellHeight = options.cellSize; // pixels
   } else {
@@ -51,8 +53,11 @@ Grid.prototype.createDrawer = function () {
 };
 
 Grid.prototype.recalcGeometry = function () {
-  this.cellWidth = Math.floor(window.innerWidth / this.columns);
-  this.cellHeight = Math.floor(window.innerHeight / this.rows);
+  if (this.options.stretch) {
+    this.cellWidth = Math.floor(window.innerWidth / this.columns);
+    this.cellHeight = Math.floor(window.innerHeight / this.rows);
+  }
+
   // this.ctx.canvas.width = window.innerWidth;
   this.ctx.canvas.width = this.cellWidth * this.columns + this.options.gridThickness;
   // this.ctx.canvas.height = window.innerHeight;
