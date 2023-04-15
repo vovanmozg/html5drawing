@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <style>
+    line {
+      display: flex;
+      stroke: rgb(0, 0, 0);
+      stroke-width: 2
+    }
+
+    .row {
+      padding-bottom: 30px;
+      display: flex;
+      flex-direction: row;
+      align-content: flex-start;
+    }
+
+    .word {
+      display: flex;
+      flex-flow: column wrap;
+      align-self: flex-start;
+      align-content: flex-start;
+      width: 60px;
+      height: 40px;
+      border: 1px solid #BBB;
+      margin-right: 20px;
+      padding: 5px;
+    }
+
+    .layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  </style>
+
+  <script src="./script.js"></script>
+</head>
+<body onload="documentLoaded()">
+  <div class="layout">
+    <div id="cipher">
+      <div id="container"></div>
+    </div>
+    <div id="settings">
+      <div>
+        <select id="langId" onchange="langSelected(this)">
+          <option value="1">Minmalistic without borders</option>
+          <option value="2">With hard and soft modifiers</option>
+          <option value="5">Minimalistic with borders</option>
+          <option value="predator">Predator</option>
+          <option value="perpendicular">Perpendicular</option>
+          <option value="random">Random</option>
+        </select>
+      </div>
+
+      <textarea id="textSource" cols="50" rows="20" oninput="textSourceChanged()">
+В сто сорок солнц закат пылал,
+в июль катилось лето,
+была жара,
+жара плыла —
+на даче было это.
+Пригорок Пушкино горбил
+Акуловой горою,
+а низ горы —
+деревней был,
+кривился крыш корою.
+а б в г д е ё ж з и й к
+л м н о п р с т у ф х ц
+ч ш щ ъ ы ь э ю я</textarea>
+
+      <textarea id="abcSource" cols="50" rows="20" oninput="abcChanged()"></textarea>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
