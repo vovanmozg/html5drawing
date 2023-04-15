@@ -1,0 +1,145 @@
+
+
+<!DOCTYPE html>
+<html >
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta content='width=1024' name='viewport'>
+    <style>
+    body {
+      background: #333;
+      color: #bbb;
+    }
+
+  #wrapper
+   {
+
+   }
+    #cnv {
+      border: 0px solid #FF3030;
+      width: 601px;
+      height: 601px;
+      margin: 20px auto;
+      display: block;
+    }
+
+    </style>
+      <!-- link href="css.css" rel="stylesheet" media="all" / -->
+
+  </head>
+  <body>
+    <div id="wrapper">
+      <canvas id="cnv" width="601" height="601"></canvas>
+    </div>
+  
+    <script>
+
+
+var canvas = document.getElementById("cnv")
+var context = canvas.getContext("2d");
+
+var W = 600;
+var H = 600;
+
+var center = {
+  x: W / 2,
+  y: H / 2
+}
+
+
+
+var T = 0;
+
+// map
+for (var x = 0.5; x < 1001; x += 10) {
+  context.moveTo(x, 0);
+  context.lineTo(x, 540);
+}
+for (var y = 0.5; y < 541; y += 10) {
+  context.moveTo(0, y);
+  context.lineTo(1000, y);
+}
+
+context.strokeStyle = "#303030";
+context.stroke();
+
+context.beginPath();
+context.strokeStyle = "#777";
+
+
+setInterval('circle()', 400);
+
+
+
+function circle() {
+
+  var A = {
+    x: rnd(10),
+    y: rnd(10)
+  };
+
+  var S = rnd(1)+10;
+
+  var R1 = rnd(300);
+  var R2 = rnd(300);
+
+  var color = {
+    r: rnd(255),
+    g: rnd(255),
+    b: rnd(255),
+  }
+
+  var lw = rnd(10)+1;
+
+  //context.lineDashOffset = 3;
+
+  for(var i=0; i<360; i+=S) {
+
+    var g1 = Math.PI * i / 180;
+    var g2 = Math.PI * (i+10) / 180;
+
+    var x1 = center.x + R1 * Math.sin(g1);//+A.x);
+    var y1 = center.y + R1 * Math.cos(g1);//+A.y);
+    var x2 = center.x + R2 * Math.sin(g2);
+    var y2 = center.y + R2 * Math.cos(g2);
+
+    //var x1d = x1*Math.cos(Math.PI/4) - y1*Math.sin(Math.PI/4);
+    //var y1d = x1*Math.sin(Math.PI/4) + y1*Math.cos(Math.PI/4);
+
+    line(x1,
+     y1, 
+     x2, 
+     y2,  
+     "rgba("+color.r+","+color.g+","+color.b+",.8)",
+     lw,
+     context
+     );
+  }
+}
+
+function rnd(v) {
+  return Math.floor(Math.random()*v)
+}
+
+function line(x1, y1, x2, y2, color, lw, context) {
+  context.strokeStyle = color;
+  context.lineWidth=lw;
+  context.beginPath();
+  context.moveTo(x1, y1);
+  context.lineTo(x2, y2);
+  context.stroke();
+}
+
+
+function pset(x, y, context, color) {
+  context.strokeStyle = color;
+  context.beginPath();
+  context.moveTo(x, y);
+  context.lineTo(x, y+1);
+  context.stroke();
+}
+
+    </script>
+
+  </body>
+</html>
