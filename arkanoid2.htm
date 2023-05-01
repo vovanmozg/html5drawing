@@ -1,0 +1,354 @@
+<html>
+<body>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #bbb;
+}
+#canvas {
+
+}
+</style>
+<canvas id="canvas" tabindex="0"></canvas>
+</body>
+<script>
+
+
+function Graph() {
+  
+  this.canvas = document.getElementById('canvas');
+  this.ctx = canvas.getContext('2d');
+  this.w = canvas.width = window.innerWidth;
+  this.h = canvas.height = window.innerHeight;
+
+  // Нарисовать квадратик
+  this.box = function(x, y, w, color) {
+
+    this.ctx.fillStyle = color; 
+    this.ctx.fillRect(x, y, w, w);
+  }
+
+  this.line = function(x1, y1, x2, y2) {
+
+    this.ctx.beginPath();
+    this.ctx.moveTo(x1, y1);
+    this.ctx.lineTo(x2, y2);
+    this.ctx.strokeStyle="#333";
+    this.ctx.stroke();
+
+  }
+}
+
+
+
+function Map() {
+  this.cell_size = 20;
+  this.cells = new Array();
+  this.cols = 0;
+  this.rows = 0;
+  this.bg = '#000000';
+
+  this.guns = new Array();
+  this.bullets = {};
+  this.enemies = {};
+
+
+  this.init = function() {
+    for (var x = 0; x < G.w; x += this.cell_size) {
+      this.cols++;
+      G.line(x, 0, x, G.h);
+    }
+    for (var y = 0; y < G.h; y += this.cell_size) {
+      this.rows++;
+      G.line(0, y, G.w, y);
+    }
+
+  }
+
+  // Отрисовать объект на карте
+  this.drawObject = function(obj) {
+    x = obj.col * this.cell_size;
+    y = obj.row * this.cell_size;
+    G.box(x + 1, y + 1, this.cell_size - 2, obj.color);
+  }
+
+  // Скрыть объект на карте
+  this.hideObject = function(obj) {
+    x = obj.col * this.cell_size;
+    y = obj.row * this.cell_size;
+    G.box(x + 1, y + 1, this.cell_size - 2, this.bg);
+  }
+
+  this.init();
+
+}
+
+// Пуля
+// function Bullet(col, row) {
+
+//   this.col = col;
+//   this.row = row;
+//   this.color = '#ff0000';
+
+
+//   this.fly = function(_this) {
+//     _this.checkHit();
+//     _this.hide()
+//     _this.row--;
+//     _this.show();
+//     setTimeout(_this.fly, 100, _this);
+//   }
+
+//   this.hide = function() {
+//     M.hideObject(this);
+//   }
+
+//   this.show = function() {
+//     M.drawObject(this);
+//   }
+
+//   // Проверить пересечение пули с врагом
+//   this.checkHit = function() {
+//     for(id in M.enemies) {
+//       var enemy = M.enemies[id];
+//       //console.log(this, enemy);
+//       if(enemy && this.col == enemy.col && this.row <= enemy.row) {
+        
+//         console.log ('hit')
+//         M.enemies[id].destroy();
+//         M.bullets[this.id].destroy();
+        
+//       }
+//     }
+//   } 
+
+//   this.init = function () {
+//     this.id = guid();
+//     M.bullets[this.id] = this;
+//     this.fly(this);
+//   }
+
+//   this.destroy = function() {
+//     clearTimeout(this.timeoutHandler);
+//     delete this;
+//     delete M.bullets[this.id];
+//     M.bullets[this.id] = {}
+//   }
+
+//   this.init();
+// }
+
+// Пушка
+// function Gun() {
+//   this.col = 0;
+//   this.row = 0;
+//   this.color = '#FF8800';
+
+//   this.init = function() {
+//     _this = this;
+//     document.body.addEventListener("keydown", function(evt) {
+//       if(evt.keyCode == 37)
+//         _this.moveLeft();
+//       if(evt.keyCode == 39)
+//         _this.moveRight();
+//       if(evt.keyCode == 32)
+//         _this.shot();
+//     }, false);
+//   }
+
+//   this.moveLeft = function() {
+//     this.hide();
+//     if(this.col > 0)
+//       this.col--;
+//     this.show();
+//   }
+
+//   this.moveRight = function() {
+//     this.hide();
+//     if(this.col < M.cols)
+//       this.col++;
+//     this.show();
+//   }
+
+//   // Переместить пушку в клетку x, y
+//   this.move = function(col, row) {
+//     this.col = col;
+//     this.row = row;
+//     this.show();
+//   }
+
+//   this.shot = function() {
+//     bullet = new Bullet(this.col, this.row - 1);
+//   }
+
+//   // скрыть пушку. Когда мы её двигаем её нужно скрыть на предыдущей позиции, и отразить на новой
+//   this.hide = function() {
+//     M.hideObject(this);
+//   }
+
+//   this.show = function() {
+//     M.drawObject(this);
+//   }
+
+//   this.init();
+// }
+
+// класс врага
+function Enemy() {
+  this.col = 30;
+  this.row = 20;
+  this.color = 'rgb(' + rc() + ',' + rc() + ',' + rc() + ')';
+  this.timeoutHandler;
+  this.fly = function(_this) {
+    //_this.hide();
+
+    var orientation = Math.random() < 0.5 ? 'row' : 'col';
+    var direction = Math.random() < 0.5 ? 1 : -1;
+    
+    var allow = false;
+    if(direction == -1 && orientation == 'col' && _this[orientation] > 0) {
+      allow = true;
+    }
+    if(direction == 1 && orientation == 'col' && _this[orientation] < M.cols - 1) {
+      allow = true;
+    }
+    if(direction == -1 && orientation == 'row' && _this[orientation] > 0) {
+      allow = true;
+    }
+    if(direction == 1 && orientation == 'row' && _this[orientation] < M.rows - 1) {
+      allow = true;
+    }
+
+    if(allow) {
+      _this[orientation] += direction;
+    }
+    
+    _this.show();
+    _this.timeoutHandler = setTimeout(_this.fly, 100, _this);
+
+  }
+
+  // 
+  this.hide = function() {
+    M.hideObject(this);
+  }
+
+  this.show = function() {
+    M.drawObject(this);
+  }
+
+  this.init = function() {
+    this.id = guid();
+    M.enemies[this.id] = this;
+    this.col = parseInt(Math.random() * M.cols);
+    this.fly(this);
+  }
+
+  this.destroy = function() {
+    clearTimeout(this.timeoutHandler);
+    delete this;
+    delete M.enemies[this.id];
+  }
+
+  this.init();
+
+}
+// создать врага
+function enemyGen() {
+  new Enemy();
+}
+
+G = new Graph();
+M = new Map();
+// GUN = new Gun();
+// GUN.move(15, 30);
+
+
+for(var i=0; i<10; i++) {
+  enemyGen();  
+}
+
+// setInterval(enemyGen, 1000)
+
+
+function rc() {
+  return parseInt(Math.random() * 255);
+}
+
+function guid() {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  }
+  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
+}
+
+// var angle = 0;
+
+
+
+// var ballx = 0;
+// var bally = 0;
+// var ballxd = 1;
+// var ballyd = 1;
+
+
+// function boxwrapper() {
+//   sizemax = 10;
+
+
+//   rand = Math.random();
+//   angle+=0.01; // = Math.random() * Math.PI * 2;
+//   size = 2;//(1 - rand) * sizemax;
+//   aplha = (1 - rand);
+//   x = width/2 + rand * width  * Math.cos(angle);
+//   y = height/2 + rand * height  * Math.sin(angle);
+
+//   x = ballx - 5 + Math.random() * 10;
+//   y = bally - 5 + Math.random() * 10;
+  
+//   box(x, y, size, 255 * Math.random(), 255 * Math.random(), 0, aplha )
+
+//   ball();
+
+// }
+
+// function ball() {
+//   ballx += ballxd * 15;
+//   bally += ballyd * 15;
+
+//   if(ballx > width || ballx < 0)
+//     ballxd *= -1;
+
+//   if(bally > height || bally < 0)
+//     ballyd *= -1;
+
+//   //console.log(ballx);
+
+//   //ctx.globalAlpha = 1;
+//   //ctx.fillStyle = 'rgb(' + 0 + ', '  + 200 + ', ' + 0 + ')'; 
+//   //ctx.fillRect(ballx, bally, 1, 1);
+// }
+
+// function box(x, y, size, r, g, b, alpha) {
+//   ctx.globalAlpha = alpha;
+//   ctx.fillStyle = 'rgb(' + parseInt(r) + ', '  + parseInt(g) + ', ' + parseInt(b) + ')'; 
+//   ctx.fillRect(x, y, size, size);
+// }
+
+
+// function rc() {
+//   return angle * 100 % 255;
+// }
+
+//setInterval(boxwrapper, 1);
+
+
+
+</script>
+</body>
+</html>
