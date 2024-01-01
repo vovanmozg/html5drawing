@@ -20,6 +20,8 @@
 <canvas id="orbits-canvas"></canvas>
 
 <script>
+// useful: https://juliaanimators.github.io/Javis.jl/stable/
+// https://www.youtube.com/watch?v=ZI1dmHv3MeM
 
 function initParams() {
   gui = new dat.GUI(); // {useLocalStorage: true} - не пашет
@@ -39,8 +41,8 @@ function initParams() {
     y4SpeedModifier: 120,
     r4: 18,
     color: "#ff8c69",
-    clear: () => { 
-      ctx.clearRect(0, 0, width, height); 
+    clear: () => {
+      ctx.clearRect(0, 0, width, height);
     }
   };
 
@@ -81,7 +83,7 @@ function point(x, y, size, color) {
   color = color || '#ff0055';
   ctx.fillStyle = color;
   // ctx.fillRect(this.x, height, 1, -height);
-  //ctx.fillStyle = this.color; 
+  //ctx.fillStyle = this.color;
   //ctx.fillRect(this.x, this.y, 5, 5);
   ctx.beginPath();
   ctx.arc(x, y, size, 0, 2*Math.PI);
@@ -122,7 +124,7 @@ function satellites({ chain, x, y }) {
   satellites({ chain, x: xNew, y: yNew })
 }
 
-function render() {  
+function render() {
   let orbitRadius;
 
 
