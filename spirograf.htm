@@ -1,0 +1,181 @@
+<html>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js" integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #bbb;
+    overflow: hidden;
+  }
+
+  #canvas, #orbits-canvas {
+    position: absolute;
+  }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<canvas id="orbits-canvas"></canvas>
+
+<script>
+
+function initParams() {
+  gui = new dat.GUI(); // {useLocalStorage: true} - не пашет
+
+  s = {
+    baseSpeed: 1, // Rotation speed
+    x1SpeedModifier: 80,
+    y1SpeedModifier: 80,
+    r1: 100,
+    x2SpeedModifier: 180,
+    y2SpeedModifier: 180,
+    r2: 80,
+    x3SpeedModifier: 120,
+    y3SpeedModifier: 120,
+    r3: 32,
+    x4SpeedModifier: 120,
+    y4SpeedModifier: 120,
+    r4: 18,
+    color: "#ff8c69",
+    clear: () => { 
+      ctx.clearRect(0, 0, width, height); 
+    }
+  };
+
+  gui.remember(s);
+
+  gui.add(s, 'clear');
+
+  gui.add(s, 'baseSpeed', 0, 10);
+  gui.addColor(s, 'color');
+
+  var dir1 = gui.addFolder('orbit1');
+  dir1.add(s, 'x1SpeedModifier', 0, 300);
+  dir1.add(s, 'y1SpeedModifier', 0, 300);
+  dir1.add(s, 'r1', 0, 200);
+  dir1.open();
+
+  var dir2 = gui.addFolder('orbit2');
+  dir2.add(s, 'x2SpeedModifier', 0, 300);
+  dir2.add(s, 'y2SpeedModifier', 0, 300);
+  dir2.add(s, 'r2', 0, 200);
+  dir2.open();
+
+  var dir3 = gui.addFolder('orbit3');
+  dir3.add(s, 'x3SpeedModifier', 0, 300);
+  dir3.add(s, 'y3SpeedModifier', 0, 300);
+  dir3.add(s, 'r3', 0, 200);
+  dir3.open();
+
+  var dir4 = gui.addFolder('orbit4');
+  dir4.add(s, 'x4SpeedModifier', 0, 300);
+  dir4.add(s, 'y4SpeedModifier', 0, 300);
+  dir4.add(s, 'r4', 0, 200);
+  dir4.open();
+}
+
+function point(x, y, size, color) {
+  ctx.globalAlpha = 0.5;
+  color = color || '#ff0055';
+  ctx.fillStyle = color;
+  // ctx.fillRect(this.x, height, 1, -height);
+  //ctx.fillStyle = this.color; 
+  //ctx.fillRect(this.x, this.y, 5, 5);
+  ctx.beginPath();
+  ctx.arc(x, y, size, 0, 2*Math.PI);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function orbit(xCenter, yCenter, x2, y2, size) {
+  orbCtx.strokeStyle = '#999';
+  orbCtx.beginPath();
+  orbCtx.arc(xCenter, yCenter, size, 0, 2*Math.PI);
+  orbCtx.closePath();
+  orbCtx.stroke();
+
+  orbCtx.beginPath();
+  orbCtx.moveTo(xCenter, yCenter);
+  orbCtx.lineTo(x2,y2);
+  orbCtx.stroke();
+}
+
+function satellite(x, y, xNew, yNew, radius, pointColor) {
+  orbit(x, y, xNew, yNew, radius);
+  if (pointColor) {
+    point(xNew, yNew, 1, pointColor);
+  }
+}
+
+function satellites({ chain, x, y }) {
+  if (chain.length <= 0 ) {
+    return;
+  }
+
+  const f = chain.shift();
+  const [xNew, yNew, radius, pointColor] = f(x, y);
+
+  satellite(x, y, xNew, yNew, radius, pointColor)
+
+  satellites({ chain, x: xNew, y: yNew })
+}
+
+function render() {  
+  let orbitRadius;
+
+
+  orbCtx.clearRect(0, 0, width, height);
+  counter += 1;
+
+  const chain = [
+    (x, y) => [
+      x + Math.sin(counter/s.x1SpeedModifier*s.baseSpeed) * s.r1,
+      y + Math.cos(counter/s.y1SpeedModifier*s.baseSpeed) * s.r1,
+      s.r1
+    ],
+    (x, y) => [
+      x + Math.sin(counter/s.x2SpeedModifier*s.baseSpeed) * s.r2,
+      y - Math.cos(counter/s.x2SpeedModifier*s.baseSpeed) * s.r2,
+      s.r2
+    ],
+    (x, y) => [
+      x + Math.sin(counter/s.x3SpeedModifier*s.baseSpeed) * s.r3,
+      y + Math.cos(counter/s.y3SpeedModifier*s.baseSpeed) * s.r3,
+      32
+    ],
+    (x, y) => [
+      x + Math.sin(counter/s.x4SpeedModifier*s.baseSpeed) * s.r4,
+      y - Math.cos(counter/s.y4SpeedModifier*s.baseSpeed) * s.r4,
+      18,
+      s.color
+    ]
+  ]
+
+  satellites({ chain, x: width/2, y: height/2 });
+  requestAnimationFrame(render);
+  // setTimeout(1000, render)
+}
+
+
+initParams();
+
+const orbitsCanvas = document.getElementById('orbits-canvas');
+const orbCtx = orbitsCanvas.getContext('2d');
+orbitsCanvas.width = window.innerWidth;
+orbitsCanvas.height = window.innerHeight/10*10;
+
+orbCtx.globalAlpha = 0.5;
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const width = canvas.width = window.innerWidth;
+const height = canvas.height = window.innerHeight/10*10;
+let counter = 0;
+
+render();
+
+</script>
+</body>
+</html>
