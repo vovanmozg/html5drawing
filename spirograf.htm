@@ -41,6 +41,8 @@ function initParams() {
     y4SpeedModifier: 60,
     r4: 20,
     color: "#ff8c69",
+    instant: true,
+    showOrbits: true,
     clear: () => {
       ctx.clearRect(0, 0, width, height);
     }
@@ -76,6 +78,9 @@ function initParams() {
   dir4.add(s, 'y4SpeedModifier', 0, 1000);
   dir4.add(s, 'r4', 0, 200);
   dir4.open();
+
+  gui.add(s, 'instant'); 
+  gui.add(s, 'showOrbits'); 
 }
 
 function point(x, y, size, color) {
@@ -105,7 +110,10 @@ function orbit(xCenter, yCenter, x2, y2, size) {
 }
 
 function satellite(x, y, xNew, yNew, radius, pointColor) {
-  orbit(x, y, xNew, yNew, radius);
+  if (s.showOrbits) {
+    orbit(x, y, xNew, yNew, radius);
+  }
+  
   if (pointColor) {
     point(xNew, yNew, 1, pointColor);
   }
@@ -124,7 +132,7 @@ function satellites({ chain, x, y }) {
   satellites({ chain, x: xNew, y: yNew })
 }
 
-function render() {
+function draw() {
   let orbitRadius;
 
 
@@ -156,6 +164,22 @@ function render() {
   ]
 
   satellites({ chain, x: width/2, y: height/2 });
+}
+
+function drawInstant() {
+  ctx.clearRect(0, 0, width, height);
+  for(let i=0; i<10000; i++) {
+    draw();
+  }
+}
+
+function render() {
+  if (s.instant) {
+    drawInstant();
+  } else {
+    draw();
+  }
+  
   requestAnimationFrame(render);
   // setTimeout(1000, render)
 }
