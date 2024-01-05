@@ -27,19 +27,19 @@ function initParams() {
   gui = new dat.GUI(); // {useLocalStorage: true} - не пашет
 
   s = {
-    baseSpeed: 1, // Rotation speed
-    x1SpeedModifier: 80,
-    y1SpeedModifier: 80,
-    r1: 100,
-    x2SpeedModifier: 180,
-    y2SpeedModifier: 180,
+    baseSpeed: 2, // Rotation speed
+    x1SpeedModifier: 480,
+    y1SpeedModifier: 480,
+    r1: 160,
+    x2SpeedModifier: 240,
+    y2SpeedModifier: 240,
     r2: 80,
     x3SpeedModifier: 120,
     y3SpeedModifier: 120,
-    r3: 32,
-    x4SpeedModifier: 120,
-    y4SpeedModifier: 120,
-    r4: 18,
+    r3: 40,
+    x4SpeedModifier: 60,
+    y4SpeedModifier: 60,
+    r4: 20,
     color: "#ff8c69",
     clear: () => {
       ctx.clearRect(0, 0, width, height);
@@ -54,26 +54,26 @@ function initParams() {
   gui.addColor(s, 'color');
 
   var dir1 = gui.addFolder('orbit1');
-  dir1.add(s, 'x1SpeedModifier', 0, 300);
-  dir1.add(s, 'y1SpeedModifier', 0, 300);
+  dir1.add(s, 'x1SpeedModifier', 0, 1000);
+  dir1.add(s, 'y1SpeedModifier', 0, 1000);
   dir1.add(s, 'r1', 0, 200);
   dir1.open();
 
   var dir2 = gui.addFolder('orbit2');
-  dir2.add(s, 'x2SpeedModifier', 0, 300);
-  dir2.add(s, 'y2SpeedModifier', 0, 300);
+  dir2.add(s, 'x2SpeedModifier', 0, 1000);
+  dir2.add(s, 'y2SpeedModifier', 0, 1000);
   dir2.add(s, 'r2', 0, 200);
   dir2.open();
 
   var dir3 = gui.addFolder('orbit3');
-  dir3.add(s, 'x3SpeedModifier', 0, 300);
-  dir3.add(s, 'y3SpeedModifier', 0, 300);
+  dir3.add(s, 'x3SpeedModifier', 0, 1000);
+  dir3.add(s, 'y3SpeedModifier', 0, 1000);
   dir3.add(s, 'r3', 0, 200);
   dir3.open();
 
   var dir4 = gui.addFolder('orbit4');
-  dir4.add(s, 'x4SpeedModifier', 0, 300);
-  dir4.add(s, 'y4SpeedModifier', 0, 300);
+  dir4.add(s, 'x4SpeedModifier', 0, 1000);
+  dir4.add(s, 'y4SpeedModifier', 0, 1000);
   dir4.add(s, 'r4', 0, 200);
   dir4.open();
 }
@@ -145,12 +145,12 @@ function render() {
     (x, y) => [
       x + Math.sin(counter/s.x3SpeedModifier*s.baseSpeed) * s.r3,
       y + Math.cos(counter/s.y3SpeedModifier*s.baseSpeed) * s.r3,
-      32
+      s.r3
     ],
     (x, y) => [
       x + Math.sin(counter/s.x4SpeedModifier*s.baseSpeed) * s.r4,
-      y - Math.cos(counter/s.y4SpeedModifier*s.baseSpeed) * s.r4,
-      18,
+      y + Math.cos(counter/s.y4SpeedModifier*s.baseSpeed) * s.r4,
+      s.r4,
       s.color
     ]
   ]
