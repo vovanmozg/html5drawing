@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style>* {
+        padding: 0;
+        margin: 0;
+        border: 0;
+        outline: 0;
+        overflow: hidden;
+
+    }
+
+    canvas {
+        width: 100%;
+        background: white;
+    }</style>
+</head>
+<body>
+
+<canvas id="c" width="2000" height="1080" style=""></canvas>
+
+<script>var c = document.querySelector("#c");
+c.width = 1920;
+c.height = 1080;
+var S = Math.sin;
+var C = Math.cos;
+var T = Math.tan;
+// var R = function (r, g, b, a) {
+//   a = a === undefined ? 1 : a;
+//   return "rgba(" + (r | 0) + "," + (g | 0) + "," + (b | 0) + "," + a + ")";
+// };
+var x = c.getContext("2d");
+var startT = +new Date();
+//////////////////////////////////////////
+
+ 
+
+function u(t) {
+  
+    //c.width |= 0
+  
+
+  offsetX = 704
+  offsetY = 184
+  dotsInField = 32
+  dotSize = 16
+
+
+  x.fillStyle=`rgb(200,0,0)`
+
+  if (t == 0) {
+    console.log(t)
+
+    for(i=0; i<100; i++) {
+      X = Math.floor(Math.random() * dotsInField)
+      Y = Math.floor(Math.random() * dotsInField)
+      x.fillRect(offsetX + X * dotSize, offsetY + Y * dotSize, dotSize, dotSize);
+    }
+    
+    
+  }
+  born = 0
+  died = 0
+  nochange = 0
+
+
+  var matrix = [];
+  
+  for (row=0;row<dotsInField;row++){
+    matrix[row] = []
+    for (col=0;col<dotsInField;col++) {
+      red = x.getImageData(col * dotSize + offsetX, row * dotSize + offsetY, 1, 1).data[0]
+      matrix[row][col] = 0 + (red === 200);
+      
+    }
+  }
+
+
+   for (X=0;X<dotsInField;X++){
+    for (Y=0;Y<dotsInField;Y++) {
+      if (X == 0) {
+        w = dotsInField - 1
+        e = X + 1
+      } else if (X == dotsInField - 1) {
+        w = X - 1
+        e = 0
+      } else {
+        w = X - 1
+        e = X + 1
+      }
+
+      if (Y == 0) {
+        n = dotsInField - 1
+        s = Y + 1
+      } else if (Y == dotsInField - 1) {
+        n = Y - 1
+        s = 0
+      } else {
+        n = Y - 1
+        s = Y + 1
+      }
+
+
+      // area = [
+
+
+      //   matrix[X - 1] !== undefined && matrix[X - 1][Y - 1] !== undefined ? matrix[X - 1][Y - 1] : 0,
+      //   matrix[X][Y - 1] !== undefined ? matrix[X][Y - 1] : 0,
+      //   matrix[X + 1] !== undefined && matrix[X + 1][Y - 1] !== undefined ? matrix[X + 1][Y - 1] : 0,
+        
+      //   matrix[X - 1] !== undefined && matrix[X - 1][Y] !== undefined ? matrix[X - 1][Y] : 0,
+      //   matrix[X][Y],
+      //   matrix[X + 1] !== undefined && matrix[X + 1][Y] !== undefined ? matrix[X + 1][Y] : 0,
+
+      //   matrix[X - 1] !== undefined && matrix[X - 1][Y + 1] !== undefined ? matrix[X - 1][Y + 1] : 0,
+      //   matrix[X][Y + 1] !== undefined ? matrix[X][Y + 1] : 0,
+      //   matrix[X + 1] !== undefined && matrix[X + 1][Y + 1] !== undefined ? matrix[X + 1][Y + 1] : 0,
+      // ]
+
+
+
+      area = [
+        matrix[w][n], matrix[X][n], matrix[e][n],
+        matrix[w][Y], matrix[X][Y], matrix[e][Y],
+        matrix[w][s], matrix[X][s], matrix[e][s],
+      ]
+
+      neigbhorsCount = area.reduce((memo, v) => (memo + v)) - area[4];
+
+
+      //debugger
+      //x.fillStyle=`rgba(100,100,100,${Math.floor(Math.random()*100)}%)`
+      //x.fillRect(X*dotSize+offsetX,Y*dotSize+offsetY,dotSize,dotSize);
+
+      
+      //x.fillStyle=`hsla(0,0%,100%,50%)`
+      
+      
+
+      x.fillStyle=`rgb(255,255,255)`
+      if (area[4] == 1) {
+        
+        if (neigbhorsCount < 2 || neigbhorsCount > 3) {
+          x.fillStyle=`rgb(255,255,255)`
+
+          died++
+        } else {
+          x.fillStyle=`rgb(200,0,0)`
+          nochange++
+          
+        }
+        
+      } else {
+        if (neigbhorsCount == 3) {
+          x.fillStyle=`rgb(200,0,0)`
+          born++
+          
+        }
+      }
+
+      x.fillRect(Y*dotSize+offsetX,X*dotSize+offsetY,dotSize,dotSize);
+
+      
+
+
+      
+    }
+  }
+
+//  console.log(`born:${born}, died:${died}, nochange:${nochange}`)
+
+
+
+ // imageData.data[0] = 0
+ // imageData.data[1] = 0
+ // imageData.data[2] = 1
+ // imageData.data[3] = 255
+ 
+ ///x.putImageData(imageData, 704, 184)
+
+
+
+}
+
+
+function loop() {
+  requestAnimationFrame(loop);
+  u((new Date() - startT) / 1000);
+};
+
+ loop();
+
+//setInterval( () => u((new Date() - startT) / 1000 < 2 ? 0 : 1), 1000)
+
+</script>
+</body>
+</html>
