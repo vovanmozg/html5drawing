@@ -147,7 +147,23 @@
       }
     }
 
-
+    function checkBulletEnemyCollision() {
+      for (let i = 0; i < bullets.length; i++) {
+        for (let j = 0; j < enemies.length; j++) {
+          let bullet = bullets[i];
+          let enemy = enemies[j];
+          if (bullet.x < enemy.x + enemy.width &&
+            bullet.x + bullet.width > enemy.x &&
+            bullet.y < enemy.y + enemy.height &&
+            bullet.y + bullet.height > enemy.y) {
+            // Столкновение произошло, удаляем пулю и врага
+            bullets.splice(i, 1);
+            enemies.splice(j, 1);
+            return;
+          }
+        }
+      }
+    }
 
     function update() {
       if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
@@ -157,6 +173,7 @@
       updateBullets();
       updateGroundForms(); // Обновляем формы на земле
       updateEnemies(); // Обновляем врагов
+      checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
     }
 
 // В функции draw добавляем отрисовку врагов
