@@ -49,11 +49,12 @@
     const enemies = [];
     const enemySpeed = 2;
 
-    function drawShip() {
-      ctx.fillStyle = 'white';
-      ctx.fillRect(ship.x, ship.y, ship.width, ship.height);
-    }
+    const shipImg = new Image();
+    shipImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cGF0aCBkPSJNNTAsMEwgMTAwLDUwIEwgNTAsMTAwIEwgMCw1MCBaIiBmaWxsPSJ3aGl0ZSIgLz4KPC9zdmc+Cg=='; // Замените на вашу base64-строку SVG
 
+    function drawShip() {
+      ctx.drawImage(shipImg, ship.x, ship.y, ship.width, ship.height);
+    }
     function drawBullet(bullet) {
       ctx.fillStyle = 'yellow';
       ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
