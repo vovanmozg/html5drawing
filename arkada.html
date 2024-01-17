@@ -49,12 +49,27 @@
     const enemies = [];
     const enemySpeed = 2;
 
-    const shipImg = new Image();
-    shipImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj4KICA8cGF0aCBkPSJNNTAsMEwgMTAwLDUwIEwgNTAsMTAwIEwgMCw1MCBaIiBmaWxsPSJ3aGl0ZSIgLz4KPC9zdmc+Cg=='; // Замените на вашу base64-строку SVG
+    // Ракета
+    const rocketPixels = [
+      [1, 1, 1, 1, 0],
+      [0, 1, 1, 1, 1],
+      [1, 1, 1, 1, 0],
+    ];
+
+    // Размер пикселя
+    const pixelSize = 5;
 
     function drawShip() {
-      ctx.drawImage(shipImg, ship.x, ship.y, ship.width, ship.height);
+      for (let i = 0; i < rocketPixels.length; i++) {
+        for (let j = 0; j < rocketPixels[i].length; j++) {
+          if (rocketPixels[i][j] === 1) {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(ship.x + j * pixelSize, ship.y + i * pixelSize, pixelSize, pixelSize);
+          }
+        }
+      }
     }
+
     function drawBullet(bullet) {
       ctx.fillStyle = 'yellow';
       ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
