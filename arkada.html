@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Космический корабль</title>
+    <style>
+        canvas {
+            display: block;
+            background-color: #000;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Установка размеров canvas
+    canvas.width = 800;
+    canvas.height = 600;
+
+    // Корабль
+    const ship = {
+      x: 50,
+      y: canvas.height / 2,
+      width: 50,
+      height: 30,
+      speed: 5,
+      moveUp: false,
+      moveDown: false
+    };
+
+    // Фон
+    let backgroundX = 0;
+    const backgroundSpeed = 2;
+
+    function drawShip() {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(ship.x, ship.y, ship.width, ship.height);
+    }
+
+    function updateBackground() {
+      backgroundX -= backgroundSpeed;
+      // Это создает бесконечный эффект для фона
+      if (backgroundX <= -canvas.width) {
+        backgroundX = 0;
+      }
+    }
+
+    function drawBackground() {
+      ctx.fillStyle = 'blue';
+      // Рисуем два фона для непрерывного эффекта
+      ctx.fillRect(backgroundX, 0, canvas.width, canvas.height);
+      ctx.fillRect(backgroundX + canvas.width, 0, canvas.width, canvas.height);
+    }
+
+    function update() {
+      if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
+      if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
+
+      updateBackground();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
+      drawShip();
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Обработчики клавиатуры
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowUp') ship.moveUp = true;
+      if (e.key === 'ArrowDown') ship.moveDown = true;
+    });
+
+    document.addEventListener('keyup', function(e) {
+      if (e.key === 'ArrowUp') ship.moveUp = false;
+      if (e.key === 'ArrowDown') ship.moveDown = false;
+    });
+
+    gameLoop();
+  });
+
+
+</script>
+</body>
+</html>
