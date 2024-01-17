@@ -120,9 +120,22 @@
       enemies.push(enemy);
     }
 
+    // Пиксель-арт врага
+    const enemyPixels = [
+      [0, 1, 1],
+      [1, 1, 1],
+      [0, 1, 1],
+    ];
+
     function drawEnemy(enemy) {
-      ctx.fillStyle = 'red';
-      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+      for (let i = 0; i < enemyPixels.length; i++) {
+        for (let j = 0; j < enemyPixels[i].length; j++) {
+          if (enemyPixels[i][j] === 1) {
+            ctx.fillStyle = 'red';
+            ctx.fillRect(enemy.x + j * pixelSize, enemy.y + i * pixelSize, pixelSize, pixelSize);
+          }
+        }
+      }
     }
 
     function updateEnemies() {
