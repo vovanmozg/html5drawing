@@ -77,47 +77,10 @@
       }
     }
 
-    // Формы на земле
-    const groundForms = [];
-    for (let i = 0; i < 20; i++) { // 20 форм на земле
-      let x = Math.random() * canvas.width;
-      let y = groundY + Math.random() * groundHeight / 2;
-      let w = 10 + Math.random() * 20; // ширина формы
-      let h = 10 + Math.random() * 20; // высота формы
-      groundForms.push({x, y, w, h});
-    }
-
-
-    function updateGroundForms() {
-      for (let i = 0; i < groundForms.length; i++) {
-        groundForms[i].x -= backgroundSpeed;
-        // Если форма вышла за пределы канваса слева, добавляем ее справа
-        if (groundForms[i].x + groundForms[i].w < 0) {
-          groundForms[i].x = canvas.width;
-          groundForms[i].y = groundY + Math.random() * groundHeight / 2;
-          groundForms[i].w = 10 + Math.random() * 20;
-          groundForms[i].h = 10 + Math.random() * 20;
-        }
-      }
-    }
-
-    function drawGround() {
-      ctx.fillStyle = 'green';
-      ctx.fillRect(backgroundX, groundY, canvas.width, groundHeight);
-      ctx.fillRect(backgroundX + canvas.width, groundY, canvas.width, groundHeight);
-
-      // Рисуем формы на земле
-      ctx.fillStyle = 'darkgreen'; // цвет для форм
-      for (let i = 0; i < groundForms.length; i++) {
-        ctx.fillRect(groundForms[i].x, groundForms[i].y, groundForms[i].w, groundForms[i].h);
-      }
-    }
-
     function drawBackground() {
       ctx.fillStyle = '#000';
       ctx.fillRect(backgroundX, 0, canvas.width, groundY);
       ctx.fillRect(backgroundX + canvas.width, 0, canvas.width, groundY);
-      drawGround(); // Добавляем землю на фон
     }
 
     function createEnemy() {
@@ -204,7 +167,6 @@
       updateBackground();
       updateStars(); // Обновляем звезды
       updateBullets();
-      updateGroundForms(); // Обновляем формы на земле
       updateEnemies(); // Обновляем врагов
       checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
     }
