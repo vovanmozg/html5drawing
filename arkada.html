@@ -149,6 +149,7 @@
             bullets.splice(i, 1);
             enemies.splice(j, 1);
             score++; // Увеличиваем счет
+            createExplosion(enemy.x, enemy.y); // Создаем взрыв
             return;
           }
         }
@@ -187,17 +188,6 @@
       }
     }
 
-    function update() {
-      if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
-      if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
-
-      updateBackground();
-      updateStars(); // Обновляем звезды
-      updateBullets();
-      updateEnemies(); // Обновляем врагов
-      checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
-    }
-
     // Количество сбитых врагов
     let score = 0;
 
@@ -207,7 +197,39 @@
       ctx.fillText('Score: ' + score, canvas.width - 100, 30);
     }
 
-// В функции draw добавляем отрисовку счета
+    // Взрывы
+    const explosions = [];
+
+    function createExplosion(x, y) {
+      let explosion = {
+        x: x,
+        y: y,
+        radius: 0, // радиус взрыва
+        duration: 30 // длительность взрыва в кадрах
+      };
+      explosions.push(explosion);
+    }
+
+    function drawExplosion(explosion) {
+      ctx.fillStyle = 'orange';
+      ctx.beginPath();
+      ctx.arc(explosion.x, explosion.y, explosion.radius, 0, Math.PI * 2, false);
+      ctx.fill();
+    }
+
+    function updateExplosions() {
+      for (let i = 0; i < explosions.length; i++) {
+        explosions[i].radius += 2; // увеличиваем радиус взрыва
+        explosions[i].duration--; // уменьшаем длительность взрыва
+        // Удаляем взрыв, если его длительность истекла
+        if (explosions[i].duration <= 0) {
+          explosions.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    // В функции draw добавляем отрисовку счета
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
@@ -215,8 +237,22 @@
       drawShip();
       bullets.forEach(drawBullet);
       enemies.forEach(drawEnemy);
+      explosions.forEach(drawExplosion); // Отрисовываем взрывы
       drawScore(); // Отрисовываем счет
     }
+
+    function update() {
+      if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
+      if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
+
+      updateBackground();
+      updateStars(); // Обновляем звезды
+      updateBullets();
+      updateEnemies(); // Обновляем врагов
+      updateExplosions(); // Обновляем взрывы
+      checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
+    }
+
 // В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
     let lastEnemyCreationTime = Date.now();
     let lastStarCreationTime = Date.now();
