@@ -154,10 +154,10 @@
     function updateStars() {
       for (let i = 0; i < stars.length; i++) {
         stars[i].x -= stars[i].speed;
-        // Если звезда вышла за пределы канваса слева, добавляем ее справа
+        // Если звезда вышла за пределы канваса слева, удаляем ее
         if (stars[i].x + stars[i].radius < 0) {
-          stars[i].x = canvas.width;
-          stars[i].y = Math.random() * (canvas.height - groundHeight);
+          stars.splice(i, 1);
+          i--;
         }
       }
     }
