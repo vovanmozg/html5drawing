@@ -51,19 +51,29 @@
 
     // Ракета
     const rocketPixels = [
-      [1, 1, 1, 1, 0],
-      [0, 1, 1, 1, 1],
-      [1, 1, 1, 1, 0],
+      [0, 0, 1, 1, 1, 1, 0],
+      [2, 2, 0, 1, 1, 1, 1],
+      [0, 0, 1, 1, 1, 1, 0],
     ];
 
     // Размер пикселя
     const pixelSize = 5;
+
+    let isOrange = true; // Переменная для переключения цвета огня
+
+    // Переключаем цвет огня каждые 500 мс
+    setInterval(function() {
+      isOrange ^= true;
+    }, 100);
 
     function drawShip() {
       for (let i = 0; i < rocketPixels.length; i++) {
         for (let j = 0; j < rocketPixels[i].length; j++) {
           if (rocketPixels[i][j] === 1) {
             ctx.fillStyle = 'white';
+            ctx.fillRect(ship.x + j * pixelSize, ship.y + i * pixelSize, pixelSize, pixelSize);
+          } else if (rocketPixels[i][j] === 2) {
+            ctx.fillStyle = isOrange ? 'orange' : 'red';
             ctx.fillRect(ship.x + j * pixelSize, ship.y + i * pixelSize, pixelSize, pixelSize);
           }
         }
