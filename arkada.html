@@ -33,28 +33,70 @@
       moveDown: false
     };
 
+    // Пули
+    const bullets = [];
+    const bulletSpeed = 10;
+
     // Фон
     let backgroundX = 0;
     const backgroundSpeed = 2;
+
+    // Текстура земли
+    let groundY = canvas.height - 50; // Позиция земли от низа канваса
+    const groundHeight = 50; // Высота земли
 
     function drawShip() {
       ctx.fillStyle = 'white';
       ctx.fillRect(ship.x, ship.y, ship.width, ship.height);
     }
 
+    function drawBullet(bullet) {
+      ctx.fillStyle = 'yellow';
+      ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+    }
+
     function updateBackground() {
       backgroundX -= backgroundSpeed;
-      // Это создает бесконечный эффект для фона
       if (backgroundX <= -canvas.width) {
         backgroundX = 0;
       }
     }
 
+    function updateBullets() {
+      for (let i = 0; i < bullets.length; i++) {
+        bullets[i].x += bulletSpeed;
+        // Удаляем пулю, если она вышла за пределы канваса
+        if (bullets[i].x > canvas.width) {
+          bullets.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    function drawGround() {
+      ctx.fillStyle = 'green';
+      ctx.fillRect(backgroundX, groundY, canvas.width, groundHeight);
+      ctx.fillRect(backgroundX + canvas.width, groundY, canvas.width, groundHeight);
+
+      // Рисуем простые формы на земле
+      ctx.fillStyle = 'darkgreen'; // цвет для неоднородностей
+      for (let i = 0; i < 10; i++) { // 10 форм на каждом фрагменте земли
+        let x = backgroundX + Math.random() * canvas.width;
+        let y = groundY + Math.random() * groundHeight / 2;
+        let w = 10 + Math.random() * 20; // ширина формы
+        let h = 10 + Math.random() * 20; // высота формы
+        ctx.fillRect(x, y, w, h);
+        x = backgroundX + canvas.width + Math.random() * canvas.width;
+        ctx.fillRect(x, y, w, h);
+      }
+    }
+
+
     function drawBackground() {
       ctx.fillStyle = 'blue';
-      // Рисуем два фона для непрерывного эффекта
-      ctx.fillRect(backgroundX, 0, canvas.width, canvas.height);
-      ctx.fillRect(backgroundX + canvas.width, 0, canvas.width, canvas.height);
+      ctx.fillRect(backgroundX, 0, canvas.width, groundY);
+      ctx.fillRect(backgroundX + canvas.width, 0, canvas.width, groundY);
+      drawGround(); // Добавляем землю на фон
     }
 
     function update() {
@@ -62,12 +104,14 @@
       if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
 
       updateBackground();
+      updateBullets();
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
       drawShip();
+      bullets.forEach(drawBullet);
     }
 
     function gameLoop() {
@@ -80,6 +124,9 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'ArrowUp') ship.moveUp = true;
       if (e.key === 'ArrowDown') ship.moveDown = true;
+      if (e.key === 'Shift') { // Shift для стрельбы
+        bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
+      }
     });
 
     document.addEventListener('keyup', function(e) {
@@ -89,6 +136,7 @@
 
     gameLoop();
   });
+
 
 
 </script>
