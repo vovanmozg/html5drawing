@@ -73,24 +73,41 @@
       }
     }
 
+    // Формы на земле
+    const groundForms = [];
+    for (let i = 0; i < 20; i++) { // 20 форм на земле
+      let x = Math.random() * canvas.width;
+      let y = groundY + Math.random() * groundHeight / 2;
+      let w = 10 + Math.random() * 20; // ширина формы
+      let h = 10 + Math.random() * 20; // высота формы
+      groundForms.push({x, y, w, h});
+    }
+
+
+    function updateGroundForms() {
+      for (let i = 0; i < groundForms.length; i++) {
+        groundForms[i].x -= backgroundSpeed;
+        // Если форма вышла за пределы канваса слева, добавляем ее справа
+        if (groundForms[i].x + groundForms[i].w < 0) {
+          groundForms[i].x = canvas.width;
+          groundForms[i].y = groundY + Math.random() * groundHeight / 2;
+          groundForms[i].w = 10 + Math.random() * 20;
+          groundForms[i].h = 10 + Math.random() * 20;
+        }
+      }
+    }
+
     function drawGround() {
       ctx.fillStyle = 'green';
       ctx.fillRect(backgroundX, groundY, canvas.width, groundHeight);
       ctx.fillRect(backgroundX + canvas.width, groundY, canvas.width, groundHeight);
 
-      // Рисуем простые формы на земле
-      ctx.fillStyle = 'darkgreen'; // цвет для неоднородностей
-      for (let i = 0; i < 10; i++) { // 10 форм на каждом фрагменте земли
-        let x = backgroundX + Math.random() * canvas.width;
-        let y = groundY + Math.random() * groundHeight / 2;
-        let w = 10 + Math.random() * 20; // ширина формы
-        let h = 10 + Math.random() * 20; // высота формы
-        ctx.fillRect(x, y, w, h);
-        x = backgroundX + canvas.width + Math.random() * canvas.width;
-        ctx.fillRect(x, y, w, h);
+      // Рисуем формы на земле
+      ctx.fillStyle = 'darkgreen'; // цвет для форм
+      for (let i = 0; i < groundForms.length; i++) {
+        ctx.fillRect(groundForms[i].x, groundForms[i].y, groundForms[i].w, groundForms[i].h);
       }
     }
-
 
     function drawBackground() {
       ctx.fillStyle = 'blue';
@@ -105,6 +122,7 @@
 
       updateBackground();
       updateBullets();
+      updateGroundForms(); // Обновляем формы на земле
     }
 
     function draw() {
@@ -124,7 +142,7 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'ArrowUp') ship.moveUp = true;
       if (e.key === 'ArrowDown') ship.moveDown = true;
-      if (e.key === 'Shift') { // Shift для стрельбы
+      if (e.key === ' ') { // пробел для стрельбы
         bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
       }
     });
