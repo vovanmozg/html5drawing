@@ -114,7 +114,7 @@
     }
 
     function drawBackground() {
-      ctx.fillStyle = 'blue';
+      ctx.fillStyle = '#000';
       ctx.fillRect(backgroundX, 0, canvas.width, groundY);
       ctx.fillRect(backgroundX + canvas.width, 0, canvas.width, groundY);
       drawGround(); // Добавляем землю на фон
@@ -165,11 +165,44 @@
       }
     }
 
+    // Звезды
+    const stars = [];
+    const starSpeed = 0.5;
+
+    function createStar() {
+      let star = {
+        x: Math.random() * canvas.width,
+        y: Math.random() * (canvas.height - groundHeight),
+        radius: Math.random() * 2, // радиус звезды
+        speed: starSpeed
+      };
+      stars.push(star);
+    }
+
+    function drawStar(star) {
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2, false);
+      ctx.fill();
+    }
+
+    function updateStars() {
+      for (let i = 0; i < stars.length; i++) {
+        stars[i].x -= stars[i].speed;
+        // Если звезда вышла за пределы канваса слева, добавляем ее справа
+        if (stars[i].x + stars[i].radius < 0) {
+          stars[i].x = canvas.width;
+          stars[i].y = Math.random() * (canvas.height - groundHeight);
+        }
+      }
+    }
+
     function update() {
       if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
       if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
 
       updateBackground();
+      updateStars(); // Обновляем звезды
       updateBullets();
       updateGroundForms(); // Обновляем формы на земле
       updateEnemies(); // Обновляем врагов
@@ -180,18 +213,24 @@
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
+      stars.forEach(drawStar); // Отрисовываем звезды
       drawShip();
       bullets.forEach(drawBullet);
-      enemies.forEach(drawEnemy); // Отрисовываем врагов
+      enemies.forEach(drawEnemy);
     }
 
 // В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
     let lastEnemyCreationTime = Date.now();
+    let lastStarCreationTime = Date.now();
     function gameLoop() {
       let now = Date.now();
       if (now - lastEnemyCreationTime > 2000) { // 2000 мс = 2 сек
         createEnemy();
         lastEnemyCreationTime = now;
+      }
+      if (now - lastStarCreationTime > 100) { // 100 мс
+        createStar();
+        lastStarCreationTime = now;
       }
 
       update();
