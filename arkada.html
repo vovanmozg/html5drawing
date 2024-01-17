@@ -45,6 +45,10 @@
     let groundY = canvas.height - 50; // Позиция земли от низа канваса
     const groundHeight = 50; // Высота земли
 
+    // Враги
+    const enemies = [];
+    const enemySpeed = 2;
+
     function drawShip() {
       ctx.fillStyle = 'white';
       ctx.fillRect(ship.x, ship.y, ship.width, ship.height);
@@ -116,6 +120,35 @@
       drawGround(); // Добавляем землю на фон
     }
 
+    function createEnemy() {
+      let enemy = {
+        x: canvas.width,
+        y: Math.random() * (canvas.height - groundHeight),
+        width: 30,
+        height: 30,
+        speed: enemySpeed
+      };
+      enemies.push(enemy);
+    }
+
+    function drawEnemy(enemy) {
+      ctx.fillStyle = 'red';
+      ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+    }
+
+    function updateEnemies() {
+      for (let i = 0; i < enemies.length; i++) {
+        enemies[i].x -= enemies[i].speed;
+        // Удаляем врага, если он вышел за пределы канваса
+        if (enemies[i].x + enemies[i].width < 0) {
+          enemies.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+
+
     function update() {
       if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
       if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
@@ -123,16 +156,27 @@
       updateBackground();
       updateBullets();
       updateGroundForms(); // Обновляем формы на земле
+      updateEnemies(); // Обновляем врагов
     }
 
+// В функции draw добавляем отрисовку врагов
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
       drawShip();
       bullets.forEach(drawBullet);
+      enemies.forEach(drawEnemy); // Отрисовываем врагов
     }
 
+// В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
+    let lastEnemyCreationTime = Date.now();
     function gameLoop() {
+      let now = Date.now();
+      if (now - lastEnemyCreationTime > 2000) { // 2000 мс = 2 сек
+        createEnemy();
+        lastEnemyCreationTime = now;
+      }
+
       update();
       draw();
       requestAnimationFrame(gameLoop);
