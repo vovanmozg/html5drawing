@@ -26,9 +26,9 @@
     const ship = {
       x: 50,
       y: canvas.height / 2,
-      width: 50,
-      height: 30,
-      speed: 5,
+      width: 20,
+      height: 10,
+      speed: 3,
       moveUp: false,
       moveDown: false
     };
@@ -122,6 +122,7 @@
             // Столкновение произошло, удаляем пулю и врага
             bullets.splice(i, 1);
             enemies.splice(j, 1);
+            score++; // Увеличиваем счет
             return;
           }
         }
@@ -171,16 +172,25 @@
       checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
     }
 
-// В функции draw добавляем отрисовку врагов
+    // Количество сбитых врагов
+    let score = 0;
+
+    function drawScore() {
+      ctx.fillStyle = 'white';
+      ctx.font = '20px Arial';
+      ctx.fillText('Score: ' + score, canvas.width - 100, 30);
+    }
+
+// В функции draw добавляем отрисовку счета
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
-      stars.forEach(drawStar); // Отрисовываем звезды
+      stars.forEach(drawStar);
       drawShip();
       bullets.forEach(drawBullet);
       enemies.forEach(drawEnemy);
+      drawScore(); // Отрисовываем счет
     }
-
 // В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
     let lastEnemyCreationTime = Date.now();
     let lastStarCreationTime = Date.now();
@@ -204,7 +214,7 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'ArrowUp') ship.moveUp = true;
       if (e.key === 'ArrowDown') ship.moveDown = true;
-      if (e.key === ' ') { // пробел для стрельбы
+      if (e.key === 'ArrowRight') {
         bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
       }
     });
