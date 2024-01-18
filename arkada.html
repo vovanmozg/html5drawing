@@ -273,9 +273,12 @@
 // В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
     let lastEnemyCreationTime = Date.now();
     let lastStarCreationTime = Date.now();
+    let scoreForLastEnemyCreation = score < 100 ? score : 100;
+    let enemyCreationInterval = 2000 - scoreForLastEnemyCreation * 10; // Уменьшаем интервал создания врагов в зависимости от счета
+
     function gameLoop() {
       let now = Date.now();
-      if (now - lastEnemyCreationTime > 2000) { // 2000 мс = 2 сек
+      if (now - lastEnemyCreationTime > enemyCreationInterval) { // 2000 мс = 2 сек
         createEnemy();
         lastEnemyCreationTime = now;
       }
