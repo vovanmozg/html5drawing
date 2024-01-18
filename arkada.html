@@ -169,6 +169,20 @@
       }
     }
 
+    function checkShipEnemyCollision() {
+      for (let i = 0; i < enemies.length; i++) {
+        let enemy = enemies[i];
+        if (ship.x < enemy.x + enemy.width &&
+          ship.x + ship.width > enemy.x &&
+          ship.y < enemy.y + enemy.height &&
+          ship.y + ship.height > enemy.y) {
+          // Столкновение произошло, игра заканчивается
+          console.log('Game Over');
+          return;
+        }
+      }
+    }
+
     // Звезды
     const stars = [];
     const starSpeed = 0.5;
@@ -268,6 +282,7 @@
       updateEnemies(); // Обновляем врагов
       updateParticles(); // Обновляем взрывы
       checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
+      checkShipEnemyCollision();
     }
 
 // В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
