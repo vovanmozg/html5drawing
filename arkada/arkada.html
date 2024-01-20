@@ -9,13 +9,30 @@
             background-color: #000;
             margin: 0 auto;
         }
+
+        #restartButton {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 150px;
+          height: 50px;
+          margin-left: -75px;
+          margin-top: -25px;
+          background: transparent;
+          border: 1px solid white;
+          color: white;
+          font-size: 15px;
+          cursor: pointer;
+          display: none;
+        }
     </style>
 </head>
 <body>
 <canvas id="gameCanvas"></canvas>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    let gameOver = false; // Переменная для отслеживания состояния игры
+    // Game state
+    let gameOver = false;
 
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -35,6 +52,9 @@
       moveUpStart: null,
       moveDownStart: null
     };
+
+    // Количество топлива корабля
+    let fuel = 100;
 
     // Пули
     const bullets = [];
@@ -70,6 +90,10 @@
     }, 100);
 
     function drawShip() {
+      if (gameOver) {
+        throw new Error('Ship is not alive');
+      }
+
       for (let i = 0; i < rocketPixels.length; i++) {
         for (let j = 0; j < rocketPixels[i].length; j++) {
           if (rocketPixels[i][j] === 1) {
@@ -166,6 +190,7 @@
             enemies.splice(j, 1);
             score++; // Увеличиваем счет
             createExplosion(enemy.x, enemy.y); // Создаем взрыв
+            createFuelCan(enemy.x, enemy.y);
             playExplosionSound();
             return;
           }
@@ -173,15 +198,86 @@
       }
     }
 
+    // Канистры с бензином
+    const fuelCans = [];
+    const fuelCanSpeed = 2;
+
+    function createFuelCan(x, y) {
+      let fuelCan = {
+        x: x,
+        y: y,
+        width: 10,
+        height: 10,
+        speed: fuelCanSpeed,
+      };
+      fuelCans.push(fuelCan);
+    }
+
+    // Пиксель-арт канистры с бензином
+    const fuelCanPixels = [
+      [0, 1, 0],
+      [1, 1, 1],
+      [0, 1, 0],
+    ];
+
+    function drawFuelCan(fuelCan) {
+      for (let i = 0; i < fuelCanPixels.length; i++) {
+        for (let j = 0; j < fuelCanPixels[i].length; j++) {
+          if (fuelCanPixels[i][j] === 1) {
+            ctx.fillStyle = 'green';
+            ctx.fillRect(fuelCan.x + j * pixelSize, fuelCan.y + i * pixelSize, pixelSize, pixelSize);
+          }
+        }
+      }
+    }
+
+    function updateFuelCans() {
+      for (let i = 0; i < fuelCans.length; i++) {
+        fuelCans[i].x -= fuelCans[i].speed;
+        // Если канистра вышла за пределы канваса слева, удаляем ее
+        if (fuelCans[i].x + fuelCans[i].width < 0) {
+          fuelCans.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    function checkShipFuelCanCollision() {
+      if (gameOver) return;
+
+      for (let i = 0; i < fuelCans.length; i++) {
+        let fuelCan = fuelCans[i];
+        if (ship.x < fuelCan.x + fuelCan.width &&
+          ship.x + ship.width > fuelCan.x &&
+          ship.y < fuelCan.y + fuelCan.height &&
+          ship.y + ship.height > fuelCan.y) {
+          // Collision happened, remove fuel can
+          fuelCans.splice(i, 1);
+          i--;
+          // Increase fuel
+          fuel += 10;
+          playFuelPickupSound();
+          return;
+        }
+      }
+    }
+
     function checkShipEnemyCollision() {
+      if (gameOver) return; // Если игра завершена, прерываем выполнение обработчика
+
       for (let i = 0; i < enemies.length; i++) {
         let enemy = enemies[i];
         if (ship.x < enemy.x + enemy.width &&
           ship.x + ship.width > enemy.x &&
           ship.y < enemy.y + enemy.height &&
           ship.y + ship.height > enemy.y) {
-          document.getElementById('restartButton').style.display = 'block'; // Показываем кнопку "Начать заново"
+          createExplosion(ship.x, ship.y); // Создаем взрыв
+          playExplosionSound(); // Воспроизводим звук взрыва
+
+          // Завершаем игру и показываем кнопку "Начать заново" после задержки
           gameOver = true;
+          document.getElementById('restartButton').style.display = 'block';
+
           return;
         }
       }
@@ -261,10 +357,14 @@
     function drawScore() {
       ctx.fillStyle = 'white';
       ctx.font = '14px Arial';
+      // Amount of enemies killed
       ctx.fillText('Score: ' + score, canvas.width - 100, 30);
+      // Amount of current fuel
+      ctx.fillText('Fuel: ' + parseInt(fuel), canvas.width - 200, 30);
+
     }
 
-    // Частицы взрыва
+    // Explosion
     const particles = [];
 
     function createExplosion(x, y) {
@@ -332,17 +432,39 @@
       setTimeout(function() { oscillator.stop() }, 400);
     }
 
+    function playFuelPickupSound() {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      var oscillator = context.createOscillator();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 500;
+
+      oscillator.connect(context.destination);
+      oscillator.start();
+
+      // Останавливаем осциллятор через 0.2 секунды
+      setTimeout(function() { oscillator.stop() }, 200);
+    }
+
     // В функции draw добавляем отрисовку счета
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
       stars.forEach(drawStar);
       planets.forEach(drawPlanet); // Отрисовываем планеты
-      drawShip();
-      bullets.forEach(drawBullet);
+
+      // Draw info
+      drawScore();
+
       enemies.forEach(drawEnemy);
+      fuelCans.forEach(drawFuelCan); // Отрисовываем канистры с бензином
       particles.forEach(drawParticle); // Отрисовываем частицы
-      drawScore(); // Отрисовываем счет
+
+      if (gameOver) {
+        return;
+      }
+
+      bullets.forEach(drawBullet);
+      drawShip();
     }
 
     function lerp(v0, v1, t) {
@@ -350,6 +472,15 @@
     }
 
     function update() {
+      if (!gameOver) {
+        fuel -= 0.02;
+      }
+
+      if (fuel <= 0) {
+        // If fuel is over, game over
+        gameOver = true;
+        document.getElementById('restartButton').style.display = 'block'; // Показываем кнопку "Начать заново"
+      }
       let now = Date.now();
       let t = Math.min(1, (now - (ship.moveUpStart || ship.moveDownStart)) / 500); // t изменяется от 0 до 1 в течение 0.5 секунды
       let speed = lerp(0, ship.speed, t); // скорость изменяется от 0 до ship.speed плавно
@@ -365,9 +496,12 @@
       updatePlanets(); // Обновляем планеты
       updateBullets();
       updateEnemies(); // Обновляем врагов
+      updateFuelCans(); // Обновляем канистры с бензином
       updateParticles(); // Обновляем взрывы
       checkBulletEnemyCollision(); // Проверяем столкновение пуль и врагов
       checkShipEnemyCollision();
+      checkShipFuelCanCollision(); // Проверяем столкновение корабля и канистр с бензином
+
     }
 
     // создаем врага каждые 2 секунды
@@ -378,8 +512,6 @@
     let enemyCreationInterval = 2000 - scoreForLastEnemyCreation * 10;
 
     function gameLoop() {
-      if (gameOver) return; // Если игра завершена, прерываем выполнение gameLoop
-
       let now = Date.now();
       if (now - lastEnemyCreationTime > enemyCreationInterval) { // 2000 мс = 2 сек
         createEnemy();
@@ -401,20 +533,26 @@
 
     // Обработчики клавиатуры
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'ArrowUp') {
-          ship.moveUp = true;
-          if (!ship.moveUpStart) ship.moveUpStart = Date.now();
-        }
-        if (e.key === 'ArrowDown') {
-          ship.moveDown = true;
-          if (!ship.moveDownStart) ship.moveDownStart = Date.now();
-        }      if (e.key === ' ') {
+      if (gameOver) return; // Если игра завершена, прерываем выполнение обработчика
+
+      if (e.key === 'ArrowUp') {
+        ship.moveUp = true;
+        if (!ship.moveUpStart) ship.moveUpStart = Date.now();
+      }
+      if (e.key === 'ArrowDown') {
+        ship.moveDown = true;
+        if (!ship.moveDownStart) ship.moveDownStart = Date.now();
+      }
+      if (e.key === ' ') {
         bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
         playShotSound();
       }
     });
 
     document.addEventListener('keyup', function(e) {
+      // Skip if game is over
+      if (gameOver) return; // Если игра завершена, прерываем выполнение обработчика
+
       if (e.key === 'ArrowUp') {
         ship.moveUp = false;
         ship.moveUpStart = null;
@@ -429,13 +567,23 @@
       // Сбрасываем игру
       enemies.length = 0;
       bullets.length = 0;
+      fuelCans.length = 0;
+      particles.length = 0;
+      stars.length = 0;
+      planets.length = 0;
       score = 0;
+      fuel = 100;
       ship.x = 50;
       ship.y = canvas.height / 2;
+      ship.moveUp = false;
+      ship.moveDown = false;
+      ship.moveUpStart = null;
+      ship.moveDownStart = null;
+
+      // Restart game
       gameOver = false;
-      // Начинаем игру снова
-      gameLoop();
-      // Скрываем кнопку "Начать заново"
+
+      // Hide restart button
       this.style.display = 'none';
     });
 
@@ -445,7 +593,7 @@
 
 
 </script>
-<button id="restartButton" style="display: none;">Начать заново</button>
+<button id="restartButton" style="displayы: none;">Restart</button>
 
 </body>
 </html>
