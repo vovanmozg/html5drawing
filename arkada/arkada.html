@@ -300,13 +300,12 @@
       }
     }
 
-    // Создаем новый AudioContext
-    var context = new (window.AudioContext || window.webkitAudioContext)();
+    const context = new (window.AudioContext || window.webkitAudioContext)();
 
     function playShotSound() {
       var oscillator = context.createOscillator();
       oscillator.type = 'sawtooth';
-      oscillator.frequency.value = 200;
+      oscillator.frequency.value = 5000;
 
       oscillator.connect(context.destination);
       oscillator.start();
@@ -319,27 +318,18 @@
     }
 
     function playExplosionSound() {
-      var processor = context.createScriptProcessor(1024, 1, 1);
-      var gainNode = context.createGain();
+      var oscillator = context.createOscillator();
+      oscillator.type = 'sawtooth';
+      oscillator.frequency.value = 30;
 
-      processor.onaudioprocess = function(audioProcessingEvent) {
-        var outputBuffer = audioProcessingEvent.outputBuffer;
+      oscillator.connect(context.destination);
+      oscillator.start();
 
-        for (var channel = 0; channel < outputBuffer.numberOfChannels; channel++) {
-          var outputData = outputBuffer.getChannelData(channel);
-
-          for (var sample = 0; sample < outputBuffer.length; sample++) {
-            outputData[sample] = Math.random() * 2 - 1;
-          }
-        }
-      }
-
-      processor.connect(gainNode);
-      gainNode.connect(context.destination);
-
+      // Падение частоты до 30 Гц за 0.1 секунды
       var now = context.currentTime;
-      gainNode.gain.setValueAtTime(1, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, now + 1); // Затухание звука в течение 1 секунды
+      oscillator.frequency.exponentialRampToValueAtTime(10, now + 0.3);
+
+      setTimeout(function() { oscillator.stop() }, 400);
     }
 
     // В функции draw добавляем отрисовку счета
@@ -418,7 +408,7 @@
         if (e.key === 'ArrowDown') {
           ship.moveDown = true;
           if (!ship.moveDownStart) ship.moveDownStart = Date.now();
-        }      if (e.key === 'ArrowRight') {
+        }      if (e.key === ' ') {
         bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
         playShotSound();
       }
