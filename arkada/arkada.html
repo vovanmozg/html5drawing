@@ -71,6 +71,7 @@
     // Враги
     const enemies = [];
     const enemySpeed = 2;
+    let enemiesTotal = 0;
 
     // Ракета
     const rocketPixels = [
@@ -81,6 +82,9 @@
 
     // Размер пикселя
     const pixelSize = 5;
+
+    // Shot counter
+    let shotsFired = 0;
 
     let isOrange = true; // Переменная для переключения цвета огня
 
@@ -145,6 +149,9 @@
         speed: enemySpeed
       };
       enemies.push(enemy);
+      if (!gameOver) {
+        enemiesTotal++;
+      }
     }
 
     // Пиксель-арт врага
@@ -307,7 +314,7 @@
     function updateStars() {
       for (let i = 0; i < stars.length; i++) {
         stars[i].x -= stars[i].speed;
-        // Если звезда вышла за пределы канваса слева, удаляем ее
+        // If star is out of canvas, remove it
         if (stars[i].x + stars[i].radius < 0) {
           stars.splice(i, 1);
           i--;
@@ -315,8 +322,8 @@
       }
     }
 
-    // Планеты
-    // создаем планету каждые 5 секунд
+    // Planets
+    // Create planet every 5 seconds
     let lastPlanetCreationTime = Date.now();
     let planetCreationInterval = 30000;
     const planets = [];
@@ -359,13 +366,30 @@
     let score = 0;
 
     function drawScore() {
-      ctx.fillStyle = 'white';
       ctx.font = '14px Arial';
-      // Amount of enemies killed
-      ctx.fillText('Score: ' + score, canvas.width - 100, 30);
-      // Amount of current fuel
-      ctx.fillText('Fuel: ' + parseInt(fuel), canvas.width - 200, 30);
 
+      // Amount of current fuel
+      ctx.fillStyle = fuel < 20 ? 'red' : 'white';
+      ctx.fillText('Fuel: ' + parseInt(fuel), 10, 30);
+
+      ctx.fillStyle = 'white';
+      // const efficiency = score ? parseInt((score / shotsFired) * (score / enemiesTotal) * 100) : 0;
+      const stat =
+        'Enemies: ' + enemiesTotal + ' | ' +
+        'Shots: ' + shotsFired + ' | ' +
+        'Killed: ' + score //+ ' | ' +
+
+        //'Combat Efficiency: ' + (efficiency) + '%'
+
+      ctx.fillText(stat, 70, 30);
+
+      // // Amount of enemies killed
+      // ctx.fillText('Score: ' + score, canvas.width - 100, 30);
+      // // Amount of current fuel
+      // ctx.fillText('Fuel: ' + parseInt(fuel), canvas.width - 200, 30);
+      // // Shots fired to enemies killed ratio
+      // let ratio = score ? (shotsFired / score).toFixed(2) : 0;
+      // ctx.fillText('Shots/Score: ' + ratio, canvas.width - 300, 30);
     }
 
     // Explosion
@@ -549,6 +573,7 @@
       }
       if (e.key === ' ') {
         bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
+        shotsFired++;
         playShotSound();
       }
     });
