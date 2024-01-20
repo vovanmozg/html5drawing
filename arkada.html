@@ -187,7 +187,7 @@
 
     // Звезды
     const stars = [];
-    const starSpeed = 0.5;
+    const starSpeed = 0.1;
 
     function createStar() {
       let star = {
@@ -212,6 +212,38 @@
         // Если звезда вышла за пределы канваса слева, удаляем ее
         if (stars[i].x + stars[i].radius < 0) {
           stars.splice(i, 1);
+          i--;
+        }
+      }
+    }
+
+    // Планеты
+    const planets = [];
+    const planetSpeed = 0.2;
+
+    function createPlanet() {
+      let planet = {
+        x: canvas.width + 200, // Планета создается за пределами холста справа
+        y: Math.random() * (canvas.height - groundHeight),
+        radius: Math.random() * 50 + 50, // радиус планеты
+        speed: planetSpeed
+      };
+      planets.push(planet);
+    }
+
+    function drawPlanet(planet) {
+      ctx.fillStyle = 'gray';
+      ctx.beginPath();
+      ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2, false);
+      ctx.fill();
+    }
+
+    function updatePlanets() {
+      for (let i = 0; i < planets.length; i++) {
+        planets[i].x -= planets[i].speed;
+        // Если планета вышла за пределы канваса слева, удаляем ее
+        if (planets[i].x + planets[i].radius < 0) {
+          planets.splice(i, 1);
           i--;
         }
       }
@@ -309,6 +341,7 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
       stars.forEach(drawStar);
+      planets.forEach(drawPlanet); // Отрисовываем планеты
       drawShip();
       bullets.forEach(drawBullet);
       enemies.forEach(drawEnemy);
@@ -322,6 +355,7 @@
 
       updateBackground();
       updateStars(); // Обновляем звезды
+      updatePlanets(); // Обновляем планеты
       updateBullets();
       updateEnemies(); // Обновляем врагов
       updateParticles(); // Обновляем взрывы
@@ -329,11 +363,15 @@
       checkShipEnemyCollision();
     }
 
-// В gameLoop добавляем вызов функции createEnemy каждые 2 секунды
+    // создаем врага каждые 2 секунды
     let lastEnemyCreationTime = Date.now();
     let lastStarCreationTime = Date.now();
     let scoreForLastEnemyCreation = score < 100 ? score : 100;
-    let enemyCreationInterval = 2000 - scoreForLastEnemyCreation * 10; // Уменьшаем интервал создания врагов в зависимости от счета
+    // Уменьшаем интервал создания врагов в зависимости от счета
+    let enemyCreationInterval = 2000 - scoreForLastEnemyCreation * 10;
+    // создаем планету каждые 5 секунд
+    let lastPlanetCreationTime = Date.now();
+    let planetCreationInterval = 5000; // 5000 мс = 5 сек
 
     function gameLoop() {
       if (gameOver) return; // Если игра завершена, прерываем выполнение gameLoop
@@ -346,6 +384,10 @@
       if (now - lastStarCreationTime > 100) { // 100 мс
         createStar();
         lastStarCreationTime = now;
+      }
+      if (now - lastPlanetCreationTime > planetCreationInterval) { // 5000 мс = 5 сек
+        createPlanet();
+        lastPlanetCreationTime = now;
       }
 
       update();
