@@ -321,8 +321,7 @@
     let planetCreationInterval = 30000;
     const planets = [];
     const planetSpeed = 0.2;
-    const planetImage = new Image();
-    planetImage.src = 'images/planet1.gif';
+    let currentPlanet = 1;
 
     function createPlanet() {
       let planet = {
@@ -331,10 +330,15 @@
         speed: planetSpeed,
         image: new Image()
       };
-      // Выбираем случайное имя планеты
-      let planetName = Math.floor(Math.random() * 15) + 1;
-      planet.image.src = 'images/planets/' + planetName + '.gif';
+
+      planet.image.src = 'images/planets/' + currentPlanet + '.gif';
       planets.push(planet);
+
+      // Переходим к следующей планете
+      currentPlanet++;
+      if (currentPlanet > 96) { // Если номер планеты превышает максимальное количество планет, сбрасываем его на 1
+        currentPlanet = 1;
+      }
     }
     function drawPlanet(planet) {
       ctx.drawImage(planet.image, planet.x, planet.y);
@@ -593,7 +597,7 @@
 
 
 </script>
-<button id="restartButton" style="displayы: none;">Restart</button>
+<button id="restartButton" style="displayы: none;"><u>R</u>estart</button>
 
 </body>
 </html>
