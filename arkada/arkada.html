@@ -325,7 +325,7 @@
     // Planets
     // Create planet every 5 seconds
     let lastPlanetCreationTime = Date.now();
-    let planetCreationInterval = 30000;
+    let planetCreationInterval = 10000;
     const planets = [];
     const planetSpeed = 0.2;
     let currentPlanet = 1;
@@ -346,7 +346,12 @@
       if (currentPlanet > 96) { // Если номер планеты превышает максимальное количество планет, сбрасываем его на 1
         currentPlanet = 1;
       }
+
+      if (planetCreationInterval === 10000) {
+        planetCreationInterval = 50000;
+      }
     }
+
     function drawPlanet(planet) {
       ctx.drawImage(planet.image, planet.x, planet.y);
     }
@@ -370,7 +375,7 @@
 
       // Amount of current fuel
       ctx.fillStyle = fuel < 20 ? 'red' : 'white';
-      ctx.fillText('Fuel: ' + parseInt(fuel), 10, 30);
+      ctx.fillText('Fuel: ' + parseInt(fuel) +  ' | ', 10, 30);
 
       ctx.fillStyle = 'white';
       // const efficiency = score ? parseInt((score / shotsFired) * (score / enemiesTotal) * 100) : 0;
@@ -381,7 +386,7 @@
 
         //'Combat Efficiency: ' + (efficiency) + '%'
 
-      ctx.fillText(stat, 70, 30);
+      ctx.fillText(stat, 80, 30);
 
       // // Amount of enemies killed
       // ctx.fillText('Score: ' + score, canvas.width - 100, 30);
@@ -464,13 +469,13 @@
       const context = new (window.AudioContext || window.webkitAudioContext)();
       var oscillator = context.createOscillator();
       oscillator.type = 'sine';
-      oscillator.frequency.value = 500;
+      oscillator.frequency.value = 300;
 
       oscillator.connect(context.destination);
       oscillator.start();
 
       // Останавливаем осциллятор через 0.2 секунды
-      setTimeout(function() { oscillator.stop() }, 200);
+      setTimeout(function() { oscillator.stop() }, 100);
     }
 
     // В функции draw добавляем отрисовку счета
@@ -602,6 +607,7 @@
       shotsFired = 0;
       enemiesTotal = 0;
       score = 0;
+      currentPlanet = 1;
       fuel = 100;
       ship.x = 50;
       ship.y = canvas.height / 2;
