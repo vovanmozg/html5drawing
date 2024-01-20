@@ -8,7 +8,6 @@
             display: block;
             background-color: #000;
             margin: 0 auto;
-          image-rendering: pixelated;
         }
     </style>
 </head>
@@ -32,7 +31,9 @@
       height: 10,
       speed: 3,
       moveUp: false,
-      moveDown: false
+      moveDown: false,
+      moveUpStart: null,
+      moveDownStart: null
     };
 
     // Пули
@@ -259,7 +260,7 @@
 
     function drawScore() {
       ctx.fillStyle = 'white';
-      ctx.font = '20px Arial';
+      ctx.font = '14px Arial';
       ctx.fillText('Score: ' + score, canvas.width - 100, 30);
     }
 
@@ -354,9 +355,20 @@
       drawScore(); // Отрисовываем счет
     }
 
+    function lerp(v0, v1, t) {
+      return v0 * (1 - t) + v1 * t;
+    }
+
     function update() {
-      if (ship.moveUp && ship.y > 0) ship.y -= ship.speed;
-      if (ship.moveDown && ship.y < canvas.height - ship.height) ship.y += ship.speed;
+      let now = Date.now();
+      let t = Math.min(1, (now - (ship.moveUpStart || ship.moveDownStart)) / 500); // t изменяется от 0 до 1 в течение 0.5 секунды
+      let speed = lerp(0, ship.speed, t); // скорость изменяется от 0 до ship.speed плавно
+      if (ship.moveUp && ship.y > 0) {
+        ship.y -= speed;
+      }
+      if (ship.moveDown && ship.y < canvas.height - ship.height) {
+        ship.y += speed;
+      }
 
       updateBackground();
       updateStars(); // Обновляем звезды
@@ -399,17 +411,28 @@
 
     // Обработчики клавиатуры
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'ArrowUp') ship.moveUp = true;
-      if (e.key === 'ArrowDown') ship.moveDown = true;
-      if (e.key === 'ArrowRight') {
+        if (e.key === 'ArrowUp') {
+          ship.moveUp = true;
+          if (!ship.moveUpStart) ship.moveUpStart = Date.now();
+        }
+        if (e.key === 'ArrowDown') {
+          ship.moveDown = true;
+          if (!ship.moveDownStart) ship.moveDownStart = Date.now();
+        }      if (e.key === 'ArrowRight') {
         bullets.push({ x: ship.x + ship.width, y: ship.y + ship.height / 2, width: 10, height: 5 });
         playShotSound();
       }
     });
 
     document.addEventListener('keyup', function(e) {
-      if (e.key === 'ArrowUp') ship.moveUp = false;
-      if (e.key === 'ArrowDown') ship.moveDown = false;
+      if (e.key === 'ArrowUp') {
+        ship.moveUp = false;
+        ship.moveUpStart = null;
+      }
+      if (e.key === 'ArrowDown') {
+        ship.moveDown = false;
+        ship.moveDownStart = null;
+      }
     });
 
     document.getElementById('restartButton').addEventListener('click', function() {
