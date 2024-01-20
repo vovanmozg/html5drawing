@@ -592,8 +592,7 @@
       }
     });
 
-    document.getElementById('restartButton').addEventListener('click', function() {
-      // Сбрасываем игру
+    function resetGame() {
       enemies.length = 0;
       bullets.length = 0;
       fuelCans.length = 0;
@@ -613,8 +612,16 @@
       gameOver = false;
 
       // Hide restart button
-      this.style.display = 'none';
+      document.getElementById('restartButton').style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'r' || e.key === 'R') {
+        resetGame();
+      }
     });
+
+    document.getElementById('restartButton').addEventListener('click', resetGame);
 
     gameLoop();
   });
@@ -622,7 +629,7 @@
 
 
 </script>
-<button id="restartButton" style="displayы: none;"><u>R</u>estart</button>
+<button id="restartButton"><u><b>R</b></u>estart</button>
 
 </body>
 </html>
