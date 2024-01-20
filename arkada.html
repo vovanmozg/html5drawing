@@ -268,12 +268,16 @@
     function playShotSound() {
       var oscillator = context.createOscillator();
       oscillator.type = 'sawtooth';
-      oscillator.frequency.value = 50;
+      oscillator.frequency.value = 200;
+
       oscillator.connect(context.destination);
       oscillator.start();
-      setTimeout(function() {
-        oscillator.stop();
-      }, 30);
+
+      // Падение частоты до 30 Гц за 0.1 секунды
+      var now = context.currentTime;
+      oscillator.frequency.exponentialRampToValueAtTime(30, now + 0.1);
+
+      setTimeout(function() { oscillator.stop() }, 200);
     }
 
     function playExplosionSound() {
