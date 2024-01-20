@@ -8,6 +8,7 @@
             display: block;
             background-color: #000;
             margin: 0 auto;
+          image-rendering: pixelated;
         }
     </style>
 </head>
@@ -218,24 +219,28 @@
     }
 
     // Планеты
+    // создаем планету каждые 5 секунд
+    let lastPlanetCreationTime = Date.now();
+    let planetCreationInterval = 30000;
     const planets = [];
     const planetSpeed = 0.2;
+    const planetImage = new Image();
+    planetImage.src = 'images/planet1.gif';
 
     function createPlanet() {
       let planet = {
-        x: canvas.width + 200, // Планета создается за пределами холста справа
+        x: canvas.width + 500, // Планета создается за пределами холста справа
         y: Math.random() * (canvas.height - groundHeight),
-        radius: Math.random() * 50 + 50, // радиус планеты
-        speed: planetSpeed
+        speed: planetSpeed,
+        image: new Image()
       };
+      // Выбираем случайное имя планеты
+      let planetName = Math.floor(Math.random() * 15) + 1;
+      planet.image.src = 'images/planets/' + planetName + '.gif';
       planets.push(planet);
     }
-
     function drawPlanet(planet) {
-      ctx.fillStyle = 'gray';
-      ctx.beginPath();
-      ctx.arc(planet.x, planet.y, planet.radius, 0, Math.PI * 2, false);
-      ctx.fill();
+      ctx.drawImage(planet.image, planet.x, planet.y);
     }
 
     function updatePlanets() {
@@ -369,9 +374,6 @@
     let scoreForLastEnemyCreation = score < 100 ? score : 100;
     // Уменьшаем интервал создания врагов в зависимости от счета
     let enemyCreationInterval = 2000 - scoreForLastEnemyCreation * 10;
-    // создаем планету каждые 5 секунд
-    let lastPlanetCreationTime = Date.now();
-    let planetCreationInterval = 5000; // 5000 мс = 5 сек
 
     function gameLoop() {
       if (gameOver) return; // Если игра завершена, прерываем выполнение gameLoop
