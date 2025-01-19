@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Grid Overlay</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            
+            background-color: #f0f0f0;
+        }
+        #dropArea {
+            
+            width: 100%;
+            height: 100%;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+            overflow: hidden;
+        }
+        #dropArea img {
+            display: none;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="dropArea">
+        <span>Drop an image here</span>
+        <canvas id="gridCanvas"></canvas>
+    </div>
+
+    <script>
+        const dropArea = document.getElementById('dropArea');
+        const canvas = document.getElementById('gridCanvas');
+        const ctx = canvas.getContext('2d');
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const img = new Image();
+                img.onload = () => {
+                    drawImageWithGrid(img);
+                };
+                img.src = URL.createObjectURL(file);
+            }
+        });
+
+        function drawImageWithGrid(img) {
+            const { width, height } = img;
+            const aspectRatio = width / height;
+
+            const dropAreaWidth = dropArea.clientWidth;
+            const dropAreaHeight = dropArea.clientHeight;
+            let newWidth, newHeight;
+
+            if (dropAreaWidth / dropAreaHeight > aspectRatio) {
+                newHeight = dropAreaHeight;
+                newWidth = newHeight * aspectRatio;
+            } else {
+                newWidth = dropAreaWidth;
+                newHeight = newWidth / aspectRatio;
+            }
+
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+
+            dropArea.style.width = `${newWidth}px`;
+            dropArea.style.height = `${newHeight}px`;
+
+            ctx.drawImage(img, 0, 0, newWidth, newHeight);
+            drawGrid(newWidth, newHeight);
+        }
+
+        function drawGrid(width, height) {
+            const step = 20;
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.lineWidth = 1;
+
+            for (let x = 0; x < width; x += step) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+
+            for (let y = 0; y < height; y += step) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  <style>
+    body {
+      background: #EEE;
+      color: #bbb;
+    }
+    #cnv {
+      width: 1001px;
+      height: 541px;
+      margin: 40px auto 0 auto;
+      display: block;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.9/dat.gui.min.js" integrity="sha512-WoO4Ih0CDOSLYafy22wZD/mcJ7k0ESLqtQsFa6zFKnEUrbtuGU+GkLtVhgt93xa2qewG5gKEC6CWlN8OaCTSVg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+<div id="wrapper">
+  <canvas id="cnv" width="1001" height="541"></canvas>
+</div>
+
+<script>
+  function initParams() {
+    gui = new dat.GUI();
+
+    s = {
+      horisontalPoints: 10,
+      verticalPoints: 10,
+      color: "#ff8c69",
+    };
+
+    function update() {
+      console.log(this.getValue())
+      drawRectangleWithPoints(ctx, canvas.width, canvas.height, s.horisontalPoints + s.verticalPoints);
+    }
+    gui.remember(s);
+    gui.add(s, 'horisontalPoints', 2, 10).step(1).onChange(update);
+    gui.add(s, 'verticalPoints', 2, 10).step(1).onChange(update);
+    gui.addColor(s, 'color').onChange(update)
+
+  }
+
+  function drawRectangleWithPoints(ctx, width, height, numPoints) {
+    ctx.clearRect(0, 0, width, height);
+    ctx.beginPath();
+    ctx.lineWidth = 0.5;
+
+    const points = [];
+
+    for (let i = 0; i < s.horisontalPoints / 2; i++) {
+      const x = i * (width / (s.horisontalPoints / 2 - 1));
+      points.push({x: x, y: 0});
+      points.push({x: x, y: height});
+    }
+
+    for (let i = 1; i < numPoints / 2 - 1; i++) {
+      const y = i * (height / (numPoints / 2 - 1));
+      points.push({x: 0, y: y});
+      points.push({x: width, y: y});
+    }
+
+    for (const point1 of points) {
+      for (const point2 of points) {
+        ctx.moveTo(point1.x, point1.y);
+        ctx.lineTo(point2.x, point2.y);
+      }
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  const canvas = document.getElementById('cnv');
+  const ctx = canvas.getContext('2d');
+
+
+  initParams();
+
+  drawRectangleWithPoints(ctx, canvas.width, canvas.height, 10);
+
+
+
+</script>
+</body>
+</html>
