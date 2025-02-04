@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Matrix Renderer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        svg {
+            margin: 20px;
+        }
+
+        .controls {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <svg id="svgCanvas" width="15" height="15" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script>
+        // Define the matrix (15x15)
+        const matrix = [
+            [1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1],
+            [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+            [1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0],
+            [1, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0],
+            [1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1],
+            [1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0],
+            [1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0],
+            [1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1],
+            [1, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 0],
+            [1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
+            [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1],
+            [1, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0]
+        ];
+
+        const svgCanvas = document.getElementById('svgCanvas');
+        const pixelSize = 1;
+
+        // Render the matrix as SVG
+        matrix.forEach((row, y) => {
+            row.forEach((cell, x) => {
+                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                rect.setAttribute('x', x * pixelSize);
+                rect.setAttribute('y', y * pixelSize);
+                rect.setAttribute('width', pixelSize);
+                rect.setAttribute('height', pixelSize);
+                rect.setAttribute('fill', cell === 1 ? '#000' : '#fff');
+                svgCanvas.appendChild(rect);
+            });
+        });
+    </script>
+</body>
+</html>

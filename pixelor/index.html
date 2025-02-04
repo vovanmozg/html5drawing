@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15x15 Pixel Editor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+            cursor: crosshair;
+        }
+
+        #grid {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.2;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="color"] {
+            cursor: pointer;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="pixelCanvas" width="300" height="300"></canvas>
+    <canvas id="grid" width="300" height="300"></canvas>
+
+    <div class="controls">
+        <input type="color" id="colorPicker" value="#000000">
+        <button id="clearButton">Clear</button>
+        <button id="saveButton">Save</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('pixelCanvas');
+        const ctx = canvas.getContext('2d');
+        const gridCanvas = document.getElementById('grid');
+        const gridCtx = gridCanvas.getContext('2d');
+        const colorPicker = document.getElementById('colorPicker');
+        const clearButton = document.getElementById('clearButton');
+        const saveButton = document.getElementById('saveButton');
+
+        const pixelSize = 20; // Each pixel is 20x20 on the canvas
+        const gridSize = 15;
+
+        // Draw the grid
+        for (let x = 0; x <= gridSize; x++) {
+            gridCtx.beginPath();
+            gridCtx.moveTo(x * pixelSize, 0);
+            gridCtx.lineTo(x * pixelSize, canvas.height);
+            gridCtx.strokeStyle = '#000';
+            gridCtx.lineWidth = 0.5;
+            gridCtx.stroke();
+        }
+
+        for (let y = 0; y <= gridSize; y++) {
+            gridCtx.beginPath();
+            gridCtx.moveTo(0, y * pixelSize);
+            gridCtx.lineTo(canvas.width, y * pixelSize);
+            gridCtx.strokeStyle = '#000';
+            gridCtx.lineWidth = 0.5;
+            gridCtx.stroke();
+        }
+
+        // Handle drawing
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor((e.clientX - rect.left) / pixelSize);
+            const y = Math.floor((e.clientY - rect.top) / pixelSize);
+
+            ctx.fillStyle = colorPicker.value;
+            ctx.fillRect(x * pixelSize, y * pixelSize, pixelSize, pixelSize);
+        });
+
+        // Clear the canvas
+        clearButton.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Save the canvas as a PNG
+        saveButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'pixel-art.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>
